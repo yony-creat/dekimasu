@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>にほんの やたい まつり -</title>
+  <title>にほんの やたい まつり</title>
   <style>
     * {
       box-sizing: border-box;
@@ -15,7 +15,7 @@
     }
 
     body {
-      background-color: #0f0c1b;
+      background-color: #0d0b14;
       color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -33,22 +33,23 @@
       height: 100vh;
       max-height: 600px;
       background: #181425;
-      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 12px;
+      border: 1px solid #2a243d;
     }
 
     /* Top HUD */
     #hud {
       height: 50px;
-      background: #261f36;
+      background: #211a30;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 15px;
-      border-bottom: 2px solid #3d3254;
+      border-bottom: 2px solid #372e4a;
       z-index: 10;
     }
 
@@ -95,14 +96,14 @@
       image-rendering: pixelated;
     }
 
-    /* Start Screen Overlay */
+    /* Start Overlay */
     #start-screen {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(15, 12, 27, 0.95);
+      background: rgba(13, 11, 20, 0.95);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -115,20 +116,20 @@
     #start-screen h1 {
       color: #ff4757;
       font-size: 26px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       text-shadow: 2px 2px #000;
     }
 
     #start-screen h2 {
       color: #ffcc00;
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 20px;
     }
 
     .instructions {
-      background: #261f36;
-      border: 2px solid #3d3254;
-      border-radius: 10px;
+      background: #211a30;
+      border: 2px solid #372e4a;
+      border-radius: 12px;
       padding: 15px;
       max-width: 500px;
       font-size: 14px;
@@ -169,7 +170,7 @@
       transform: translateX(-50%);
       width: 90%;
       max-width: 600px;
-      background: rgba(38, 31, 54, 0.95);
+      background: rgba(33, 26, 48, 0.96);
       border: 3px solid #ffcc00;
       border-radius: 12px;
       padding: 15px;
@@ -177,7 +178,7 @@
       flex-direction: column;
       gap: 10px;
       z-index: 50;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.8);
     }
 
     .speaker {
@@ -201,9 +202,9 @@
     }
 
     .btn-option {
-      background: #3d3254;
+      background: #372e4a;
       color: #fff;
-      border: 2px solid #574b75;
+      border: 2px solid #4f4368;
       padding: 10px;
       border-radius: 8px;
       font-size: 14px;
@@ -213,7 +214,7 @@
     }
 
     .btn-option:hover {
-      background: #574b75;
+      background: #4f4368;
     }
 
     .btn-option:active {
@@ -221,7 +222,6 @@
       color: #000;
     }
 
-    /* Feedback Banner inside Modal */
     #feedback-box {
       font-size: 14px;
       padding: 8px;
@@ -290,7 +290,7 @@
       width: 65px;
       height: 65px;
       border-radius: 50%;
-      background: rgba(255, 71, 87, 0.8);
+      background: rgba(255, 71, 87, 0.85);
       border: 2px solid #ffffff;
       color: white;
       font-weight: bold;
@@ -337,7 +337,6 @@
 <body>
 
 <div id="game-container">
-  <!-- Top HUD -->
   <div id="hud">
     <div class="hud-title">
       <span>🏮</span> にほんの やたい まつり
@@ -348,11 +347,9 @@
     </div>
   </div>
 
-  <!-- Main Game Canvas -->
   <div id="canvas-container">
     <canvas id="gameCanvas"></canvas>
 
-    <!-- Inventory -->
     <div id="inventory-bar">
       <span class="food-icon" id="food-0" title="たこやき">🐙</span>
       <span class="food-icon" id="food-1" title="おこのみやき">🥞</span>
@@ -361,7 +358,6 @@
       <span class="food-icon" id="food-4" title="メロンソーダ">🍹</span>
     </div>
 
-    <!-- Start Overlay -->
     <div id="start-screen">
       <h1>🏮 にほんの やたい まつり 🏮</h1>
       <h2>가능 / 불가능 표현 학습 게임</h2>
@@ -370,27 +366,23 @@
         <strong>🎮 게임 방법:</strong>
         <ul>
           <li><strong>이동:</strong> 키보드 방향키 / WASD / 화면 하단 터치패드</li>
-          <li><strong>대화:</strong> 야타이(포장마차)에 접근 후 <strong>[하단 TALK 버튼]</strong> 또는 <strong>Spacebar</strong></li>
-          <li><strong>목표:</strong> 5개의 야타이 점원과 대화하며 손님의 질문에 상황에 맞게 대답하세요!</li>
+          <li><strong>대화:</strong> 야타이에 접근 후 <strong>[하단 TALK 버튼]</strong> 또는 <strong>Spacebar</strong></li>
+          <li><strong>목표:</strong> 5개의 야타이 점원과 대화하며 질문에 올바르게 대답하세요!</li>
           <li><strong>보상:</strong> 정답을 맞히면 맛있는 축제 음식(타코야끼, 오코노미야끼 등)을 획득합니다.</li>
           <li><strong>주의:</strong> 틀리면 하트가 줄어듭니다! (쿠션어 해설 포함)</li>
         </ul>
       </div>
 
-      <button class="btn-start" onclick="startGame()">▶ スタート (시작하기)</button>
+      <button class="btn-start" onclick="startGame()">▶ はじめる (시작하기)</button>
     </div>
 
-    <!-- Dialogue & Quiz Modal -->
     <div id="dialogue-modal">
       <div class="speaker" id="modal-speaker">🏮 やたい てんいん</div>
       <div class="dialogue-text" id="modal-text">질문이 여기에 표시됩니다.</div>
       <div id="feedback-box"></div>
-      <div class="options-grid" id="modal-options">
-        <!-- Dynamic Buttons -->
-      </div>
+      <div class="options-grid" id="modal-options"></div>
     </div>
 
-    <!-- Touch D-Pad for Mobile/Tablet -->
     <div id="mobile-controls">
       <div class="dpad">
         <div></div>
@@ -414,7 +406,7 @@
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
 
-  // Game Data: 5 Yatai Stalls (NO KANJI used in Japanese strings)
+  // 100% Hiragana & Katakana Only Data
   const stalls = [
     {
       id: 0,
@@ -424,8 +416,6 @@
       x: 120,
       y: 120,
       color: "#ff4757",
-      targetExpr: "おもちかえり",
-      rule: "가능", // 긍정
       question: "おもちかえりが できますか。",
       correctAnswer: "はい、できます。",
       wrongAnswer: "あ、すみません。できません。",
@@ -440,8 +430,6 @@
       x: 360,
       y: 120,
       color: "#ffa502",
-      targetExpr: "カード",
-      rule: "불가능", // 현금전용
       question: "カードが できますか。",
       correctAnswer: "あ、すみません。カードは できません。",
       wrongAnswer: "はい、できます。",
@@ -456,8 +444,6 @@
       x: 600,
       y: 120,
       color: "#2ed573",
-      targetExpr: "おかわり",
-      rule: "가능",
       question: "おかわりが できますか。",
       correctAnswer: "はい、できます。",
       wrongAnswer: "あ、もうしわけございません。できません。",
@@ -472,8 +458,6 @@
       x: 220,
       y: 320,
       color: "#1e90ff",
-      targetExpr: "フリー Wi-Fi",
-      rule: "가능",
       question: "フリー Wi-Fiが できますか。",
       correctAnswer: "はい、できます。",
       wrongAnswer: "あ、すみません。できません。",
@@ -488,8 +472,6 @@
       x: 500,
       y: 320,
       color: "#3742fa",
-      targetExpr: "おもちこみ",
-      rule: "불가능",
       question: "おもちこみが できますか。",
       correctAnswer: "あ、もうしわけございません。できません。",
       wrongAnswer: "はい、できます。",
@@ -498,65 +480,44 @@
     }
   ];
 
-  // Game State
-  let player = {
-    x: 360,
-    y: 480,
-    size: 24,
-    speed: 4,
-    vx: 0,
-    vy: 0
-  };
-
+  let player = { x: 360, y: 480, size: 24, speed: 4, vx: 0, vy: 0 };
   let hearts = 3;
   let score = 0;
   let gameStarted = false;
   let activeStall = null;
   let isDialogueOpen = false;
 
-  // Key states
   const keys = {};
 
-  // Resize Canvas to fit container
   function resizeCanvas() {
     const container = document.getElementById('canvas-container');
     canvas.width = container.clientWidth;
     canvas.height = container.clientHeight;
   }
-
   window.addEventListener('resize', resizeCanvas);
 
-  // Japanese Speech Synthesis (TTS)
   function speakJapanese(text, callback) {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // Stop ongoing speech
+      window.speechSynthesis.cancel();
       const uttr = new SpeechSynthesisUtterance(text);
       uttr.lang = 'ja-JP';
       uttr.rate = 0.9;
-      if (callback) {
-        uttr.onend = callback;
-      }
+      if (callback) uttr.onend = callback;
       window.speechSynthesis.speak(uttr);
     } else if (callback) {
       callback();
     }
   }
 
-  // Input Listeners
   window.addEventListener('keydown', (e) => {
     keys[e.key] = true;
-    if (e.key === ' ' || e.key === 'Enter') {
-      if (!isDialogueOpen && gameStarted) {
-        checkInteraction();
-      }
+    if ((e.key === ' ' || e.key === 'Enter') && !isDialogueOpen && gameStarted) {
+      checkInteraction();
     }
   });
 
-  window.addEventListener('keyup', (e) => {
-    keys[e.key] = false;
-  });
+  window.addEventListener('keyup', (e) => { keys[e.key] = false; });
 
-  // Mobile Controls Setup
   function setupMobileControls() {
     const bindTouch = (id, keyName) => {
       const btn = document.getElementById(id);
@@ -572,11 +533,8 @@
     bindTouch('btn-left', 'ArrowLeft');
     bindTouch('btn-right', 'ArrowRight');
 
-    const actionBtn = document.getElementById('btn-action');
-    actionBtn.addEventListener('click', () => {
-      if (!isDialogueOpen && gameStarted) {
-        checkInteraction();
-      }
+    document.getElementById('btn-action').addEventListener('click', () => {
+      if (!isDialogueOpen && gameStarted) checkInteraction();
     });
   }
 
@@ -587,13 +545,10 @@
     requestAnimationFrame(gameLoop);
   }
 
-  // Interaction Range Check
   function checkInteraction() {
     stalls.forEach(stall => {
       const dist = Math.hypot(player.x - stall.x, player.y - stall.y);
-      if (dist < 50) {
-        openQuizModal(stall);
-      }
+      if (dist < 50) openQuizModal(stall);
     });
   }
 
@@ -611,10 +566,8 @@
     speaker.innerText = `🏮 ${stall.name} (${stall.icon})`;
     text.innerText = `お客さん(손님): 「${stall.question}」`;
 
-    // Speak Question First
     speakJapanese(stall.question);
 
-    // Prepare Options (Shuffle)
     const opts = [stall.correctAnswer, stall.wrongAnswer];
     if (Math.random() > 0.5) opts.reverse();
 
@@ -632,8 +585,7 @@
 
   function handleAnswerSelect(isCorrect) {
     const feedbackBox = document.getElementById('feedback-box');
-    const optionsGrid = document.getElementById('modal-options');
-    optionsGrid.innerHTML = ''; // Clear buttons during feedback
+    document.getElementById('modal-options').innerHTML = '';
 
     if (isCorrect) {
       feedbackBox.className = 'feedback-box feedback-correct';
@@ -647,13 +599,9 @@
         document.getElementById('score-text').innerText = `かくとく: ${score} / 5`;
       }
 
-      // Read Full Dialogue (A + B)
-      const fullTextA = activeStall.question;
-      const fullTextB = activeStall.correctAnswer;
-      
-      speakJapanese(fullTextA, () => {
+      speakJapanese(activeStall.question, () => {
         setTimeout(() => {
-          speakJapanese(fullTextB, () => {
+          speakJapanese(activeStall.correctAnswer, () => {
             setTimeout(closeDialogue, 1200);
           });
         }, 400);
@@ -714,7 +662,6 @@
     closeDialogue();
   }
 
-  // Update Game Physics
   function update() {
     if (!gameStarted || isDialogueOpen) return;
 
@@ -729,20 +676,16 @@
     player.x += player.vx;
     player.y += player.vy;
 
-    // Boundaries
     player.x = Math.max(20, Math.min(canvas.width - 20, player.x));
     player.y = Math.max(60, Math.min(canvas.height - 20, player.y));
   }
 
-  // Render Loop
   function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Festival Night Background Grid
     ctx.fillStyle = "#161224";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Decorative Hanging Lanterns (提灯 - Cho-chin)
     for (let x = 40; x < canvas.width; x += 80) {
       ctx.fillStyle = "#ff4757";
       ctx.beginPath();
@@ -753,17 +696,13 @@
       ctx.fillText("祭", x - 4, 28);
     }
 
-    // Draw Yatai Stalls
     stalls.forEach(stall => {
-      // Stall Roof
       ctx.fillStyle = stall.color;
       ctx.fillRect(stall.x - 35, stall.y - 30, 70, 20);
 
-      // Stall Body
       ctx.fillStyle = "#3d2b1f";
       ctx.fillRect(stall.x - 30, stall.y - 10, 60, 40);
 
-      // Food Icon & Cleared Mark
       ctx.font = "20px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(stall.icon, stall.x, stall.y + 15);
@@ -774,12 +713,10 @@
         ctx.fillText("✓", stall.x + 22, stall.y - 15);
       }
 
-      // Stall Label (Hiragana/Katakana)
       ctx.fillStyle = "#ffffff";
       ctx.font = "11px sans-serif";
       ctx.fillText(stall.name, stall.x, stall.y + 45);
 
-      // Interaction Prompt if nearby
       const dist = Math.hypot(player.x - stall.x, player.y - stall.y);
       if (dist < 50 && !isDialogueOpen) {
         ctx.fillStyle = "#ffcc00";
@@ -788,13 +725,11 @@
       }
     });
 
-    // Draw Player Character (Yukata Boy/Girl Style)
     ctx.fillStyle = "#ff757d";
     ctx.beginPath();
     ctx.arc(player.x, player.y, player.size / 2, 0, Math.PI * 2);
     ctx.fill();
 
-    // Player Face Direction Indicator
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
     ctx.arc(player.x, player.y - 3, 4, 0, Math.PI * 2);
@@ -804,12 +739,9 @@
   function gameLoop() {
     update();
     render();
-    if (gameStarted) {
-      requestAnimationFrame(gameLoop);
-    }
+    if (gameStarted) requestAnimationFrame(gameLoop);
   }
 
-  // Init Controls
   setupMobileControls();
   resizeCanvas();
 </script>
