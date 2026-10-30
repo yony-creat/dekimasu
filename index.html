@@ -57,56 +57,56 @@
         }
         /* Touch D-Pad Styles */
         .d-btn {
-            background: rgba(255, 255, 255, 0.18);
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.22);
+            border: 2px solid rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(4px);
         }
         .d-btn:active {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
         }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col justify-center items-center p-2 sm:p-4 bg-slate-950 overflow-hidden select-none">
+<body class="h-screen w-screen flex flex-col justify-between items-center p-2 sm:p-4 bg-slate-950 overflow-hidden select-none">
 
     <!-- Header Banner -->
-    <header class="w-full max-w-4xl flex justify-between items-center mb-2 px-3 py-2 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg">
+    <header class="w-full max-w-4xl flex justify-between items-center mb-1.5 px-3 py-2 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg flex-shrink-0">
         <div class="flex items-center space-x-2">
-            <span class="text-2xl animate-pulse">🏮</span>
+            <span class="text-xl sm:text-2xl animate-pulse">🏮</span>
             <div>
-                <h1 class="text-sm sm:text-base font-extrabold text-amber-300 tracking-wider">まつり やたい RPG</h1>
-                <p class="text-xs text-rose-300">가능/불가능 표현 (~できます / ~できません)</p>
+                <h1 class="text-xs sm:text-base font-extrabold text-amber-300 tracking-wider">まつり やたい RPG</h1>
+                <p class="text-[10px] sm:text-xs text-rose-300">가능/불가능 표현 (~できます / ~できません)</p>
             </div>
         </div>
         
         <!-- Status: Hearts & Audio Toggle -->
-        <div class="flex items-center space-x-3 text-xs sm:text-sm">
-            <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 flex items-center gap-1">
+        <div class="flex items-center space-x-2 sm:space-x-3 text-xs">
+            <div class="bg-slate-800 px-2 py-1 rounded-lg border border-slate-700 flex items-center gap-1">
                 <span>❤️</span>
-                <span id="hp-count" class="font-bold text-rose-400 text-sm">3/3</span>
+                <span id="hp-count" class="font-bold text-rose-400 text-xs sm:text-sm">3/3</span>
             </div>
-            <button id="tts-toggle-btn" class="bg-red-950 hover:bg-red-900 text-rose-200 px-2.5 py-1 rounded-lg border border-red-700 flex items-center gap-1 text-xs">
+            <button id="tts-toggle-btn" class="bg-red-950 hover:bg-red-900 text-rose-200 px-2 py-1 rounded-lg border border-red-700 flex items-center gap-1 text-[11px] sm:text-xs">
                 <span id="tts-icon">🔊</span>
                 <span id="tts-status">음성 ON</span>
             </button>
         </div>
     </header>
 
-    <!-- Main Game Viewport Wrapper -->
-    <div id="canvas-container" class="relative w-full max-w-4xl aspect-[4/3] max-h-[65vh] bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center">
+    <!-- Main Game Viewport Wrapper (모바일과 PC 대응) -->
+    <div id="canvas-container" class="relative w-full max-w-4xl flex-1 md:aspect-[4/3] bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center">
         
         <!-- Canvas for Game World -->
-        <canvas id="gameCanvas" class="w-full h-full object-contain block"></canvas>
+        <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
         <!-- On-Screen Controls Hint (Desktop) -->
-        <div class="hidden md:flex absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 gap-2 items-center pointer-events-none">
+        <div class="hidden md:flex absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 gap-2 items-center pointer-events-none z-10">
             <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">방향키 / WASD</span> 이동
             <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">Space / Enter</span> 대화
         </div>
 
         <!-- Food Tray Inventory Bar at Top-Left of Canvas -->
-        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/40 flex items-center gap-2 text-xs">
-            <span class="font-bold text-amber-300">🍱 획득한 음식:</span>
-            <div id="food-tray" class="flex gap-1.5 text-base">
+        <div class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-amber-500/40 flex items-center gap-1.5 sm:gap-2 text-xs z-10">
+            <span class="font-bold text-amber-300 text-[11px] sm:text-xs">🍱 음식:</span>
+            <div id="food-tray" class="flex gap-1 text-sm sm:text-base">
                 <span id="item-takoyaki" class="opacity-30 transition-opacity" title="たこやき">🐙</span>
                 <span id="item-okonomiyaki" class="opacity-30 transition-opacity" title="おこのみやき">🥞</span>
                 <span id="item-yakisoba" class="opacity-30 transition-opacity" title="やきそば">🥢</span>
@@ -116,54 +116,54 @@
         </div>
 
         <!-- Dialogue / Quiz Overlay Popup -->
-        <div id="dialogue-box" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-6 z-30 transition-all duration-200">
-            <div class="retro-box w-full max-w-xl p-4 sm:p-6 rounded-2xl text-white flex flex-col space-y-4 animate-fade-in relative">
+        <div id="dialogue-box" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-2 sm:p-6 z-30 transition-all duration-200">
+            <div class="retro-box w-full max-w-xl p-3 sm:p-6 rounded-2xl text-white flex flex-col space-y-3 sm:space-y-4 animate-fade-in relative max-h-[90%] overflow-y-auto">
                 
                 <!-- Station Title Header -->
                 <div class="flex justify-between items-center border-b border-red-900/60 pb-2">
                     <div class="flex items-center space-x-2">
-                        <span id="npc-avatar" class="text-3xl">🐙</span>
+                        <span id="npc-avatar" class="text-2xl sm:text-3xl">🐙</span>
                         <div>
-                            <h3 id="npc-title" class="jp-font font-bold text-amber-300 text-sm sm:text-base">たこやき やたい</h3>
-                            <p id="npc-topic" class="jp-font text-xs text-rose-200">학습: おもちかえり</p>
+                            <h3 id="npc-title" class="jp-font font-bold text-amber-300 text-xs sm:text-base">たこやき やたい</h3>
+                            <p id="npc-topic" class="jp-font text-[10px] sm:text-xs text-rose-200">학습: おもちかえり</p>
                         </div>
                     </div>
                     <button id="close-dialogue-btn" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
                 </div>
 
                 <!-- NPC Question / Prompt Context -->
-                <div class="bg-slate-900/90 p-3 sm:p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex items-center justify-between text-xs text-rose-300 font-semibold">
+                <div class="bg-slate-900/90 p-2.5 sm:p-4 rounded-xl border border-slate-800 space-y-1.5">
+                    <div class="flex items-center justify-between text-[11px] text-rose-300 font-semibold">
                         <span id="situation-badge" class="bg-red-950 px-2 py-0.5 rounded text-amber-200 border border-red-800">야타이 조건</span>
-                        <button id="speak-prompt-btn" class="hover:text-amber-300 flex items-center gap-1 text-xs">
+                        <button id="speak-prompt-btn" class="hover:text-amber-300 flex items-center gap-1 text-[11px]">
                             📢 질문 다시듣기
                         </button>
                     </div>
                     <p id="situation-text" class="text-xs sm:text-sm text-slate-300">이 야타이는 포장이 가능합니다.</p>
                     <div class="pt-1 border-t border-slate-800/80">
-                        <p class="text-xs text-slate-400">손님의 질문 (A):</p>
-                        <p id="question-text" class="jp-font font-bold text-lg sm:text-xl text-amber-300 tracking-wide">「おもちかえりが できますか。」</p>
+                        <p class="text-[11px] text-slate-400">손님의 질문 (A):</p>
+                        <p id="question-text" class="jp-font font-bold text-base sm:text-xl text-amber-300 tracking-wide">「おもちかえりが できますか。」</p>
                     </div>
                 </div>
 
                 <!-- Quiz Options Container -->
-                <div id="quiz-options-container" class="grid grid-cols-1 gap-2.5 pt-1">
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-2 pt-1">
                     <!-- Dynamic buttons injected here -->
                 </div>
 
                 <!-- Feedback Area -->
                 <div id="feedback-area" class="hidden p-3 rounded-xl text-xs sm:text-sm font-semibold flex flex-col space-y-2 transition-all bg-slate-900/90 border border-slate-800">
-                    <div id="feedback-status" class="flex items-center space-x-2 text-sm font-bold"></div>
+                    <div id="feedback-status" class="flex items-center space-x-2 text-xs sm:text-sm font-bold"></div>
                     
                     <!-- Audio Dialogue Playback Box -->
-                    <div id="audio-dialogue-box" class="bg-slate-950 p-2.5 rounded-lg border border-amber-500/30 text-xs space-y-1">
+                    <div id="audio-dialogue-box" class="bg-slate-950 p-2 rounded-lg border border-amber-500/30 text-[11px] sm:text-xs space-y-1">
                         <p class="text-amber-400 font-bold">🗣️ 전체 대화 읽기 (A & B):</p>
                         <p id="dialogue-a-line" class="jp-font text-slate-300">A: </p>
                         <p id="dialogue-b-line" class="jp-font text-emerald-400 font-bold">B: </p>
                     </div>
 
-                    <p id="feedback-explanation" class="jp-font text-slate-200 leading-relaxed text-xs"></p>
-                    <button id="next-action-btn" class="retro-btn-green py-2 px-4 rounded-xl font-bold text-white text-xs sm:text-sm self-end mt-2">
+                    <p id="feedback-explanation" class="jp-font text-slate-200 leading-relaxed text-[11px] sm:text-xs"></p>
+                    <button id="next-action-btn" class="retro-btn-green py-2 px-4 rounded-xl font-bold text-white text-xs sm:text-sm self-end mt-1">
                         다음으로 →
                     </button>
                 </div>
@@ -172,63 +172,62 @@
         </div>
 
         <!-- Start Screen Overlay -->
-        <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-start justify-center p-4 z-40 overflow-y-auto">
-            <div class="retro-box w-full max-w-lg p-5 sm:p-6 rounded-3xl text-center space-y-4 border-4 border-amber-400 my-auto">
-                <div class="text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
-                <h2 class="jp-font text-xl sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
-                <p class="text-xs text-rose-300 font-semibold">일본어 가능/불가능 표현 배우기</p>
+        <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-start justify-center p-3 sm:p-4 z-40 overflow-y-auto">
+            <div class="retro-box w-full max-w-lg p-4 sm:p-6 rounded-3xl text-center space-y-3 sm:space-y-4 border-4 border-amber-400 my-auto">
+                <div class="text-3xl sm:text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
+                <h2 class="jp-font text-lg sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
+                <p class="text-[11px] sm:text-xs text-rose-300 font-semibold">일본어 가능/불가능 표현 배우기</p>
                 
-                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800 text-left space-y-2 text-xs text-slate-300 leading-relaxed">
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-300 leading-relaxed">
                     <p class="font-bold text-amber-400 text-xs">🎮 게임 방법 & 규칙:</p>
                     <ul class="list-disc list-inside space-y-1 text-[11px] sm:text-xs">
                         <li>축제 야시장(屋台)을 탐험하며 5명의 점원과 대화하세요.</li>
                         <li>상황에 맞게 <strong>「はい、できます。」</strong> 또는 <strong>「あ、すみません。できません。」</strong>를 선택하세요.</li>
-                        <li>정답을 맞히면 맛있는 축제 음식을 획득하고 질문과 답변 **전체 대화**를 음성으로 듣습니다.</li>
-                        <li>틀리면 하트(❤️)가 깎이며, 정중한 쿠션어 해설이 나옵니다.</li>
+                        <li>정답을 맞히면 음식을 획득하고 전체 대화를 들어봅니다.</li>
+                        <li>틀리면 하트(❤️)가 깎이며 해설이 나옵니다.</li>
                     </ul>
-                    <div class="pt-2 border-t border-slate-800 flex justify-between text-[11px] text-slate-400">
-                        <span>⌨️ PC: 방향키/WASD + Enter</span>
-                        <span>📱 모바일: 화면 터치 패드</span>
-                    </div>
                 </div>
 
-                <button id="start-game-btn" class="retro-btn-green w-full py-3.5 rounded-2xl font-black text-white text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
+                <button id="start-game-btn" class="retro-btn-green w-full py-3 rounded-2xl font-black text-white text-sm sm:text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
                     ▶ スタート (시작하기)
                 </button>
             </div>
         </div>
 
-        <!-- Touch D-Pad for Mobile/Tablet Users -->
-        <div class="md:hidden absolute bottom-3 left-3 z-20 flex flex-col items-center opacity-90">
+    </div>
+
+    <!-- Touch D-Pad & Action Button Area (모바일 세로 하단 독립 배치) -->
+    <div class="md:hidden w-full max-w-4xl flex justify-between items-center px-4 py-2 mt-1 flex-shrink-0">
+        <!-- Touch D-Pad -->
+        <div class="flex flex-col items-center">
             <div class="flex justify-center">
-                <button id="btn-up" class="d-btn w-12 h-12 rounded-t-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">▲</button>
+                <button id="btn-up" class="d-btn w-10 h-10 rounded-t-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">▲</button>
             </div>
-            <div class="flex space-x-10">
-                <button id="btn-left" class="d-btn w-12 h-12 rounded-l-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">◀</button>
-                <button id="btn-right" class="d-btn w-12 h-12 rounded-r-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">▶</button>
+            <div class="flex space-x-8">
+                <button id="btn-left" class="d-btn w-10 h-10 rounded-l-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">◀</button>
+                <button id="btn-right" class="d-btn w-10 h-10 rounded-r-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">▶</button>
             </div>
             <div class="flex justify-center">
-                <button id="btn-down" class="d-btn w-12 h-12 rounded-b-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">▼</button>
+                <button id="btn-down" class="d-btn w-10 h-10 rounded-b-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">▼</button>
             </div>
         </div>
 
-        <!-- Touch Interact Action Button for Mobile/Tablet -->
-        <button id="mobile-interact-btn" class="md:hidden absolute bottom-4 right-4 z-20 retro-btn bg-amber-600 border-amber-300 text-amber-100 px-5 py-3.5 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
-            <span class="text-base">💬</span>
+        <!-- Touch Interact Action Button -->
+        <button id="mobile-interact-btn" class="retro-btn bg-amber-600 border-amber-300 text-amber-100 px-5 py-4 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
+            <span class="text-lg">💬</span>
             <span>대화하기</span>
         </button>
-
     </div>
 
     <!-- Victory Modal -->
     <div id="victory-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="retro-box w-full max-w-md p-6 rounded-3xl text-center space-y-5 border-4 border-amber-400">
-            <div class="text-5xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
-            <h2 class="jp-font text-2xl font-black text-amber-300">おめでとうございます!</h2>
-            <p class="text-sm text-slate-300 leading-relaxed">
+        <div class="retro-box w-full max-w-md p-6 rounded-3xl text-center space-y-4 border-4 border-amber-400">
+            <div class="text-4xl sm:text-5xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
+            <h2 class="jp-font text-xl sm:text-2xl font-black text-amber-300">おめでとうございます!</h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 야시장(屋台)의 모든 음식을 획득했습니다! 일본어 가능/불가능 표현을 완전히 마스터하셨습니다!
             </p>
-            <div class="bg-slate-900/90 p-4 rounded-2xl border border-amber-500/30 text-left space-y-2 text-xs text-slate-300">
+            <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-amber-500/30 text-left space-y-1.5 text-xs text-slate-300">
                 <p class="font-bold text-amber-400">💡 학습 핵심 내용 (한자 없음):</p>
                 <ul class="list-disc list-inside space-y-1 jp-font">
                     <li><strong class="text-emerald-400">가능할 때:</strong> はい、できます。</li>
@@ -236,7 +235,7 @@
                     <li><strong class="text-amber-300">정중한 거절:</strong> あ、もうしわけございません。できません。</li>
                 </ul>
             </div>
-            <button id="restart-game-btn" class="retro-btn-green w-full py-3 rounded-2xl font-bold text-white text-sm shadow-xl">
+            <button id="restart-game-btn" class="retro-btn-green w-full py-3 rounded-2xl font-bold text-white text-xs sm:text-sm shadow-xl">
                 🔄 축제 다시 즐기기
             </button>
         </div>
@@ -244,13 +243,13 @@
 
     <!-- Game Over Modal -->
     <div id="gameover-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="retro-box w-full max-w-md p-6 rounded-3xl text-center space-y-5 border-4 border-rose-600">
-            <div class="text-5xl">💔</div>
-            <h2 class="text-2xl font-black text-rose-400">하트를 모두 소모했습니다!</h2>
-            <p class="text-sm text-slate-300 leading-relaxed">
+        <div class="retro-box w-full max-w-md p-6 rounded-3xl text-center space-y-4 border-4 border-rose-600">
+            <div class="text-4xl sm:text-5xl">💔</div>
+            <h2 class="text-xl sm:text-2xl font-black text-rose-400">하트를 모두 소모했습니다!</h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 쿠션어(<span class="jp-font text-amber-300">あ、すみません / あ、もうしわけございません</span>)와 가능/불가능 표현을 기억하고 다시 도전해 보세요.
             </p>
-            <button id="retry-game-btn" class="retro-btn w-full py-3 rounded-2xl font-bold text-white text-sm shadow-xl">
+            <button id="retry-game-btn" class="retro-btn w-full py-3 rounded-2xl font-bold text-white text-xs sm:text-sm shadow-xl">
                 ❤️ 하트 채우고 다시 도전!
             </button>
         </div>
@@ -343,7 +342,7 @@
             document.getElementById('tts-icon').textContent = ttsEnabled ? '🔊' : '🔇';
         });
 
-        // STALLS DATA (NO KANJI IN JAPANESE TEXT AT ALL)
+        // STALLS DATA
         const STATIONS = [
             {
                 id: 'takoyaki',
@@ -351,10 +350,10 @@
                 foodEmoji: '🐙',
                 name: 'たこやき やたい',
                 japanese: 'おもちかえり (포장)',
-                x: 2, y: 3,
+                gridPos: { pc: { x: 2, y: 3 }, mobile: { x: 2, y: 3 } },
                 allow: true,
                 situation: '이 야타이는 테이크아웃(포장)이 가능합니다.',
-                question: 'おもちかえりが できますか。',
+                question: 'おもちかえりが できますか。'.replace('おもちかえりが', 'おもちかえりが'),
                 options: [
                     { text: 'はい、できます。', correct: true, cushion: false, exp: '정답입니다! 테이크아웃이 가능하므로 "はい、できます。"라고 답하여 🐙 たこやき를 얻었습니다!' },
                     { text: 'いいえ、できません。', correct: false, cushion: false, exp: '오답입니다. 이 야타이는 포장이 가능한 곳입니다.' },
@@ -367,7 +366,7 @@
                 foodEmoji: '🥞',
                 name: 'おこのみやき やたい',
                 japanese: 'カード (카드)',
-                x: 5, y: 3,
+                gridPos: { pc: { x: 5, y: 3 }, mobile: { x: 5, y: 5 } },
                 allow: false,
                 situation: '이 야타이는 현금 결제만 가능하고, 카드 결제가 불가능합니다.',
                 question: 'カードが できますか。',
@@ -383,7 +382,7 @@
                 foodEmoji: '🥢',
                 name: 'やきそば やたい',
                 japanese: 'おかわり (리필)',
-                x: 8, y: 3,
+                gridPos: { pc: { x: 8, y: 3 }, mobile: { x: 8, y: 3 } },
                 allow: true,
                 situation: '이 야타이는 리필(おかわり)이 가능합니다.',
                 question: 'おかわりが できますか。',
@@ -399,7 +398,7 @@
                 foodEmoji: '🍜',
                 name: 'ラーメン やたい',
                 japanese: 'フリー Wi-Fi (무료 와이파이)',
-                x: 3, y: 7,
+                gridPos: { pc: { x: 3, y: 7 }, mobile: { x: 3, y: 8 } },
                 allow: false,
                 situation: '이 야타이는 와이파이 설비가 없습니다 (Wi-Fi 불가능).',
                 question: 'フリー Wi-Fiが できますか。',
@@ -415,7 +414,7 @@
                 foodEmoji: '🍹',
                 name: 'メロンソーダ やたい',
                 japanese: 'おもちこみ (외부음식)',
-                x: 7, y: 7,
+                gridPos: { pc: { x: 7, y: 7 }, mobile: { x: 7, y: 8 } },
                 allow: false,
                 situation: '이 야타이는 외부 음식/음료 반입이 금지되어 있습니다.',
                 question: 'おもちこみが できますか。',
@@ -428,8 +427,8 @@
         ];
 
         // GAME STATE & ENGINE
-        const GRID_COLS = 11;
-        const GRID_ROWS = 10;
+        let GRID_COLS = 11;
+        let GRID_ROWS = 10;
         
         const state = {
             player: { x: 5, y: 9, dir: 'up' },
@@ -449,10 +448,17 @@
             if (container) {
                 canvas.width = container.clientWidth;
                 canvas.height = container.clientHeight;
+
+                // 모바일 세로 화면 대응
+                if (window.innerWidth < 768 && canvas.height > canvas.width) {
+                    GRID_ROWS = 11;
+                } else {
+                    GRID_ROWS = 10;
+                }
             }
         }
 
-        // RENDER FUNCTIONS (PIXEL ART STYLE)
+        // RENDER FUNCTIONS
         let lanternAnimFrame = 0;
         setInterval(() => { lanternAnimFrame = (lanternAnimFrame + 1) % 60; }, 50);
 
@@ -460,8 +466,9 @@
             if (!canvas.width || !canvas.height) resizeCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const tileSize = canvas.width / GRID_COLS;
+            const isMobile = window.innerWidth < 768;
 
-            // 1. Draw Night Festival Cobblestone Ground
+            // 1. 바닥 패턴
             for (let r = 0; r < GRID_ROWS; r++) {
                 for (let c = 0; c < GRID_COLS; c++) {
                     const isEven = (r + c) % 2 === 0;
@@ -474,7 +481,7 @@
                 }
             }
 
-            // 2. Decorative Lantern Strings
+            // 2. 등불 장식
             ctx.strokeStyle = '#852d3a';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -504,10 +511,11 @@
                 ctx.fillText('祭', lx - 5, ly + 16);
             });
 
-            // 3. Draw Stalls
+            // 3. 야타이(포장마차) 랜더링
             STATIONS.forEach(st => {
-                const sx = st.x * tileSize;
-                const sy = st.y * tileSize;
+                const pos = isMobile ? st.gridPos.mobile : st.gridPos.pc;
+                const sx = pos.x * tileSize;
+                const sy = pos.y * tileSize;
 
                 const isCompleted = state.inventory.has(st.id);
 
@@ -526,16 +534,16 @@
                 ctx.fillStyle = '#5c3a2f';
                 ctx.fillRect(sx + 6, sy + 24, tileSize - 12, 6);
 
-                ctx.font = '22px sans-serif';
+                ctx.font = `${Math.max(16, tileSize * 0.35)}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(st.foodEmoji, sx + tileSize / 2, sy + 32);
+                ctx.fillText(st.foodEmoji, sx + tileSize / 2, sy + tileSize * 0.45);
 
                 ctx.fillStyle = isCompleted ? '#10b981' : '#f59e0b';
-                ctx.fillRect(sx + 2, sy + 48, tileSize - 4, 14);
+                ctx.fillRect(sx + 2, sy + tileSize - 16, tileSize - 4, 14);
                 ctx.fillStyle = '#000000';
                 ctx.font = 'bold 9px "Noto Sans JP", sans-serif';
-                ctx.fillText(st.foodName, sx + tileSize / 2, sy + 55);
+                ctx.fillText(st.foodName, sx + tileSize / 2, sy + tileSize - 8);
 
                 if (isCompleted) {
                     ctx.fillStyle = '#10b981';
@@ -548,38 +556,38 @@
                 }
             });
 
-            // 4. Draw Player
+            // 4. 플레이어 캐릭터
             const px = state.player.x * tileSize;
             const py = state.player.y * tileSize;
 
             ctx.fillStyle = 'rgba(0,0,0,0.4)';
             ctx.beginPath();
-            ctx.ellipse(px + tileSize / 2, py + tileSize - 6, 14, 6, 0, 0, Math.PI * 2);
+            ctx.ellipse(px + tileSize / 2, py + tileSize - 6, tileSize * 0.25, 6, 0, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.fillStyle = '#3b82f6';
-            ctx.fillRect(px + 16, py + 22, 28, 28);
+            ctx.fillRect(px + tileSize * 0.2, py + tileSize * 0.35, tileSize * 0.6, tileSize * 0.5);
             ctx.fillStyle = '#f59e0b';
-            ctx.fillRect(px + 16, py + 34, 28, 6);
+            ctx.fillRect(px + tileSize * 0.2, py + tileSize * 0.55, tileSize * 0.6, 6);
 
             ctx.fillStyle = '#fde047';
             ctx.beginPath();
-            ctx.arc(px + 30, py + 18, 14, Math.PI, 0);
+            ctx.arc(px + tileSize / 2, py + tileSize * 0.3, tileSize * 0.25, Math.PI, 0);
             ctx.fill();
 
             ctx.fillStyle = '#ffedd5';
-            ctx.fillRect(px + 18, py + 18, 24, 12);
+            ctx.fillRect(px + tileSize * 0.25, py + tileSize * 0.3, tileSize * 0.5, tileSize * 0.2);
 
             ctx.fillStyle = '#000000';
             if (state.player.dir === 'down' || state.player.dir === 'up') {
-                ctx.fillRect(px + 23, py + 22, 3, 4);
-                ctx.fillRect(px + 34, py + 22, 3, 4);
+                ctx.fillRect(px + tileSize * 0.35, py + tileSize * 0.38, 3, 4);
+                ctx.fillRect(px + tileSize * 0.6, py + tileSize * 0.38, 3, 4);
             } else if (state.player.dir === 'left') {
-                ctx.fillRect(px + 20, py + 22, 3, 4);
-                ctx.fillRect(px + 28, py + 22, 3, 4);
+                ctx.fillRect(px + tileSize * 0.3, py + tileSize * 0.38, 3, 4);
+                ctx.fillRect(px + tileSize * 0.48, py + tileSize * 0.38, 3, 4);
             } else if (state.player.dir === 'right') {
-                ctx.fillRect(px + 29, py + 22, 3, 4);
-                ctx.fillRect(px + 37, py + 22, 3, 4);
+                ctx.fillRect(px + tileSize * 0.5, py + tileSize * 0.38, 3, 4);
+                ctx.fillRect(px + tileSize * 0.68, py + tileSize * 0.38, 3, 4);
             }
 
             const nearbyStation = getNearbyStation();
@@ -600,9 +608,11 @@
         }
 
         function getNearbyStation() {
+            const isMobile = window.innerWidth < 768;
             return STATIONS.find(st => {
-                const dx = Math.abs(st.x - state.player.x);
-                const dy = Math.abs(st.y - state.player.y);
+                const pos = isMobile ? st.gridPos.mobile : st.gridPos.pc;
+                const dx = Math.abs(pos.x - state.player.x);
+                const dy = Math.abs(pos.y - state.player.y);
                 return (dx === 0 && dy === 1) || (dx === 1 && dy === 0) || (dx === 0 && dy === 0);
             });
         }
@@ -616,7 +626,12 @@
 
             if (newX < 0 || newX >= GRID_COLS || newY < 1 || newY >= GRID_ROWS) return;
 
-            const isStall = STATIONS.some(st => st.x === newX && st.y === newY);
+            const isMobile = window.innerWidth < 768;
+            const isStall = STATIONS.some(st => {
+                const pos = isMobile ? st.gridPos.mobile : st.gridPos.pc;
+                return pos.x === newX && pos.y === newY;
+            });
+
             if (isStall) {
                 interact();
                 return;
@@ -655,7 +670,7 @@
 
             station.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = 'retro-btn w-full p-3 rounded-xl text-left font-bold text-amber-100 text-xs sm:text-sm flex items-center justify-between hover:border-amber-300 transition-all';
+                btn.className = 'retro-btn w-full p-2.5 sm:p-3 rounded-xl text-left font-bold text-amber-100 text-xs sm:text-sm flex items-center justify-between hover:border-amber-300 transition-all';
                 btn.innerHTML = `
                     <span class="jp-font">${idx + 1}. ${opt.text}</span>
                     <span class="text-amber-400">선택 ➔</span>
@@ -690,7 +705,7 @@
                 state.inventory.add(state.activeStation.id);
                 updateInventoryUI();
 
-                feedbackStatus.className = 'flex items-center space-x-2 text-sm font-bold text-emerald-400';
+                feedbackStatus.className = 'flex items-center space-x-2 text-xs sm:text-sm font-bold text-emerald-400';
                 feedbackStatus.innerHTML = `<span>⭕ 정답입니다! (${state.activeStation.foodEmoji} 획득)</span>`;
                 feedbackExp.textContent = selectedOption.exp;
 
@@ -709,7 +724,7 @@
                 state.hp = Math.max(0, state.hp - 1);
                 updateHpUI();
 
-                feedbackStatus.className = 'flex items-center space-x-2 text-sm font-bold text-rose-400';
+                feedbackStatus.className = 'flex items-center space-x-2 text-xs sm:text-sm font-bold text-rose-400';
                 feedbackStatus.innerHTML = `<span>❌ 아쉽습니다! (하트 -1)</span>`;
                 feedbackExp.textContent = selectedOption.exp;
 
@@ -771,7 +786,7 @@
         function resetGame() {
             state.hp = 3;
             state.inventory.clear();
-            state.player = { x: 5, y: 9, dir: 'up' };
+            state.player = { x: 5, y: 10, dir: 'up' };
             state.isGameActive = true;
             state.isDialogueOpen = false;
 
