@@ -92,7 +92,7 @@
     </header>
 
     <!-- Main Game Viewport Wrapper -->
-    <div class="relative w-full max-w-4xl aspect-[4/3] max-h-[65vh] bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center">
+    <div id="canvas-container" class="relative w-full max-w-4xl aspect-[4/3] max-h-[65vh] bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center">
         
         <!-- Canvas for Game World -->
         <canvas id="gameCanvas" class="w-full h-full object-contain block"></canvas>
@@ -142,7 +142,7 @@
                     <p id="situation-text" class="text-xs sm:text-sm text-slate-300">이 야타이는 포장이 가능합니다.</p>
                     <div class="pt-1 border-t border-slate-800/80">
                         <p class="text-xs text-slate-400">손님의 질문 (A):</p>
-                        <p id="question-text" class="jp-font font-bold text-lg sm:text-xl text-amber-300 tracking-wide">「おもちかえりが できますか。」</p>
+                        <p id="question-text" class="jp-font font-bold text-lg sm:text-xl text-amber-300 tracking-wide">「おもちかえ리가 できますか。」</p>
                     </div>
                 </div>
 
@@ -173,7 +173,7 @@
 
         <!-- Start Screen Overlay -->
         <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-start justify-center p-4 z-40 overflow-y-auto">
-            <div class="retro-box w-full max-w-lg p-5 sm:p-6 rounded-3xl text-center space-y-4 border-4 border-amber-400">
+            <div class="retro-box w-full max-w-lg p-5 sm:p-6 rounded-3xl text-center space-y-4 border-4 border-amber-400 my-auto">
                 <div class="text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
                 <h2 class="jp-font text-xl sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
                 <p class="text-xs text-rose-300 font-semibold">일본어 가능/불가능 표현 배우기</p>
@@ -192,9 +192,9 @@
                     </div>
                 </div>
 
-               <button id="start-game-btn" onclick="document.getElementById('start-screen').style.display='none'; gameStarted=true; resizeCanvas(); gameLoop();" class="retro-btn-green w-full py-3.5 rounded-2xl font-black text-white text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
-    ▶ スタート (시작하기)
-</button>
+                <button id="start-game-btn" class="retro-btn-green w-full py-3.5 rounded-2xl font-black text-white text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
+                    ▶ スタート (시작하기)
+                </button>
             </div>
         </div>
 
@@ -316,7 +316,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // Reads Dialogue A (Question) then Dialogue B (Answer) sequentially
         function speakDialogueSequence(textA, textB) {
             if (!ttsEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
@@ -344,9 +343,7 @@
             document.getElementById('tts-icon').textContent = ttsEnabled ? '🔊' : '🔇';
         });
 
-        // -------------------------------------------------------------
         // STALLS DATA (NO KANJI IN JAPANESE TEXT AT ALL)
-        // -------------------------------------------------------------
         const STATIONS = [
             {
                 id: 'takoyaki',
@@ -430,9 +427,7 @@
             }
         ];
 
-        // -------------------------------------------------------------
         // GAME STATE & ENGINE
-        // -------------------------------------------------------------
         const GRID_COLS = 11;
         const GRID_ROWS = 10;
         
@@ -443,26 +438,26 @@
             inventory: new Set(),
             activeStation: null,
             isDialogueOpen: false,
-            isGameActive: false // Starts false until Start Game clicked
+            isGameActive: false
         };
 
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-      function resizeCanvas() {
-  const container = document.getElementById('canvas-container');
-  canvas.width = container.clientWidth;
-  canvas.height = container.clientHeight;anjf
-}
-        resizeCanvas();
+        function resizeCanvas() {
+            const container = document.getElementById('canvas-container');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
 
-        // -------------------------------------------------------------
         // RENDER FUNCTIONS (PIXEL ART STYLE)
-        // -------------------------------------------------------------
         let lanternAnimFrame = 0;
         setInterval(() => { lanternAnimFrame = (lanternAnimFrame + 1) % 60; }, 50);
 
         function drawGame() {
+            if (!canvas.width || !canvas.height) resizeCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const tileSize = canvas.width / GRID_COLS;
 
@@ -473,14 +468,13 @@
                     ctx.fillStyle = isEven ? '#1e1b2e' : '#171424';
                     ctx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
                     
-                    // Cobblestone outline details
                     ctx.strokeStyle = '#110e1c';
                     ctx.lineWidth = 1;
                     ctx.strokeRect(c * tileSize, r * tileSize, tileSize, tileSize);
                 }
             }
 
-            // 2. Decorative Lantern Strings (Top and Center)
+            // 2. Decorative Lantern Strings
             ctx.strokeStyle = '#852d3a';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -488,13 +482,11 @@
             ctx.quadraticCurveTo(canvas.width / 2, 60, canvas.width, 30);
             ctx.stroke();
 
-            // Lanterns Hanging
             const lanternPositions = [0.8, 2.2, 3.8, 5.2, 6.8, 8.2, 9.8];
             lanternPositions.forEach((pos, idx) => {
                 const lx = pos * tileSize;
                 const ly = 35 + Math.sin((lanternAnimFrame + idx * 10) * 0.1) * 3;
                 
-                // Glow
                 const grad = ctx.createRadialGradient(lx, ly + 15, 2, lx, ly + 15, 25);
                 grad.addColorStop(0, 'rgba(255, 180, 50, 0.4)');
                 grad.addColorStop(1, 'rgba(255, 180, 50, 0)');
@@ -503,7 +495,6 @@
                 ctx.arc(lx, ly + 15, 25, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Lantern Body
                 ctx.fillStyle = '#e63946';
                 ctx.fillRect(lx - 10, ly, 20, 24);
                 ctx.fillStyle = '#ffb703';
@@ -513,18 +504,16 @@
                 ctx.fillText('祭', lx - 5, ly + 16);
             });
 
-            // 3. Draw Stalls (Yatai Vendors)
+            // 3. Draw Stalls
             STATIONS.forEach(st => {
                 const sx = st.x * tileSize;
                 const sy = st.y * tileSize;
 
                 const isCompleted = state.inventory.has(st.id);
 
-                // Stall Shadow
                 ctx.fillStyle = 'rgba(0,0,0,0.4)';
                 ctx.fillRect(sx + 4, sy + tileSize - 8, tileSize - 8, 12);
 
-                // Stall Roof Tent
                 ctx.fillStyle = isCompleted ? '#2a9d8f' : '#e63946';
                 ctx.fillRect(sx + 2, sy + 4, tileSize - 4, 16);
                 ctx.fillStyle = '#ffffff';
@@ -532,26 +521,22 @@
                     ctx.fillRect(sx + 2 + (i * 12), sy + 16, 6, 6);
                 }
 
-                // Stall Wooden Table
                 ctx.fillStyle = '#8d5b4c';
                 ctx.fillRect(sx + 4, sy + 22, tileSize - 8, 26);
                 ctx.fillStyle = '#5c3a2f';
                 ctx.fillRect(sx + 6, sy + 24, tileSize - 12, 6);
 
-                // Food / Vendor Emoji
                 ctx.font = '22px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(st.foodEmoji, sx + tileSize / 2, sy + 32);
 
-                // Stall Label Banner
                 ctx.fillStyle = isCompleted ? '#10b981' : '#f59e0b';
                 ctx.fillRect(sx + 2, sy + 48, tileSize - 4, 14);
                 ctx.fillStyle = '#000000';
                 ctx.font = 'bold 9px "Noto Sans JP", sans-serif';
                 ctx.fillText(st.foodName, sx + tileSize / 2, sy + 55);
 
-                // Checkmark badge if completed
                 if (isCompleted) {
                     ctx.fillStyle = '#10b981';
                     ctx.beginPath();
@@ -563,32 +548,28 @@
                 }
             });
 
-            // 4. Draw Player Character
+            // 4. Draw Player
             const px = state.player.x * tileSize;
             const py = state.player.y * tileSize;
 
-            // Player Shadow
             ctx.fillStyle = 'rgba(0,0,0,0.4)';
             ctx.beginPath();
             ctx.ellipse(px + tileSize / 2, py + tileSize - 6, 14, 6, 0, 0, Math.PI * 2);
             ctx.fill();
 
-            // Player Body (Festive Yukata Character)
-            ctx.fillStyle = '#3b82f6'; // Blue Yukata
+            ctx.fillStyle = '#3b82f6';
             ctx.fillRect(px + 16, py + 22, 28, 28);
-            ctx.fillStyle = '#f59e0b'; // Obi sash
+            ctx.fillStyle = '#f59e0b';
             ctx.fillRect(px + 16, py + 34, 28, 6);
 
-            // Head & Face
-            ctx.fillStyle = '#fde047'; // Hair/Hat
+            ctx.fillStyle = '#fde047';
             ctx.beginPath();
             ctx.arc(px + 30, py + 18, 14, Math.PI, 0);
             ctx.fill();
 
-            ctx.fillStyle = '#ffedd5'; // Skin
+            ctx.fillStyle = '#ffedd5';
             ctx.fillRect(px + 18, py + 18, 24, 12);
 
-            // Eyes based on direction
             ctx.fillStyle = '#000000';
             if (state.player.dir === 'down' || state.player.dir === 'up') {
                 ctx.fillRect(px + 23, py + 22, 3, 4);
@@ -601,7 +582,6 @@
                 ctx.fillRect(px + 37, py + 22, 3, 4);
             }
 
-            // Prompt Speech Bubble if standing near a Stall
             const nearbyStation = getNearbyStation();
             if (nearbyStation && !state.isDialogueOpen && state.isGameActive) {
                 const bx = px + tileSize / 2;
@@ -619,9 +599,6 @@
             }
         }
 
-        // -------------------------------------------------------------
-        // MOVEMENT & COLLISION LOGIC
-        // -------------------------------------------------------------
         function getNearbyStation() {
             return STATIONS.find(st => {
                 const dx = Math.abs(st.x - state.player.x);
@@ -637,13 +614,11 @@
             const newX = state.player.x + dx;
             const newY = state.player.y + dy;
 
-            // Boundary checks
             if (newX < 0 || newX >= GRID_COLS || newY < 1 || newY >= GRID_ROWS) return;
 
-            // Check stall collision (player cannot walk directly ON stall)
             const isStall = STATIONS.some(st => st.x === newX && st.y === newY);
             if (isStall) {
-                interact(); // Auto open interaction on walking into stall
+                interact();
                 return;
             }
 
@@ -663,9 +638,6 @@
             }
         }
 
-        // -------------------------------------------------------------
-        // DIALOGUE & QUIZ LOGIC
-        // -------------------------------------------------------------
         function openDialogue(station) {
             state.activeStation = station;
             state.isDialogueOpen = true;
@@ -676,7 +648,6 @@
             document.getElementById('situation-text').textContent = station.situation;
             document.getElementById('question-text').textContent = `「${station.question}」`;
 
-            // Reset Feedback & Show Options
             document.getElementById('feedback-area').classList.add('hidden');
             const optionsContainer = document.getElementById('quiz-options-container');
             optionsContainer.classList.remove('hidden');
@@ -694,8 +665,6 @@
             });
 
             document.getElementById('dialogue-box').classList.remove('hidden');
-
-            // Auto-play TTS for Question
             speakJapanese(station.question);
         }
 
@@ -725,10 +694,8 @@
                 feedbackStatus.innerHTML = `<span>⭕ 정답입니다! (${state.activeStation.foodEmoji} 획득)</span>`;
                 feedbackExp.textContent = selectedOption.exp;
 
-                // TTS Play BOTH Dialogue A and Dialogue B sequentially
                 speakDialogueSequence(qText, aText);
 
-                // Check Win Condition
                 if (state.inventory.size === STATIONS.length) {
                     document.getElementById('next-action-btn').textContent = '🎉 축제 음식 모두 모음!';
                     document.getElementById('next-action-btn').onclick = () => {
@@ -746,7 +713,6 @@
                 feedbackStatus.innerHTML = `<span>❌ 아쉽습니다! (하트 -1)</span>`;
                 feedbackExp.textContent = selectedOption.exp;
 
-                // TTS Cushion Word or Negative Answer
                 speakJapanese(aText);
 
                 if (state.hp <= 0) {
@@ -771,9 +737,6 @@
             drawGame();
         }
 
-        // -------------------------------------------------------------
-        // UI & MODAL UPDATES
-        // -------------------------------------------------------------
         function updateHpUI() {
             document.getElementById('hp-count').textContent = `${state.hp}/${state.maxHp}`;
         }
@@ -822,13 +785,16 @@
             drawGame();
         }
 
-        // -------------------------------------------------------------
-        // EVENT LISTENERS (KEYBOARD & TOUCH)
-        // -------------------------------------------------------------
         document.getElementById('start-game-btn').addEventListener('click', () => {
             soundEffect.interact();
             document.getElementById('start-screen').classList.add('hidden');
             state.isGameActive = true;
+            resizeCanvas();
+            drawGame();
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
             drawGame();
         });
 
@@ -840,7 +806,6 @@
             else if (e.key === ' ' || e.key === 'Enter') interact();
         });
 
-        // Touch D-Pad Events
         document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(0, -1, 'up'); });
         document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(0, 1, 'down'); });
         document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1, 0, 'left'); });
@@ -861,8 +826,8 @@
         document.getElementById('restart-game-btn').addEventListener('click', resetGame);
         document.getElementById('retry-game-btn').addEventListener('click', resetGame);
 
-        // Game Loop / Initial Draw
         window.onload = function() {
+            resizeCanvas();
             drawGame();
             setInterval(() => {
                 drawGame();
