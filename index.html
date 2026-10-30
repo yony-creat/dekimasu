@@ -16,21 +16,52 @@
             box-sizing: border-box;
         }
         html, body {
-            width: 100%;
-            height: 100dvh;
+            width: 100vw;
+            height: 100vh;
             margin: 0;
             padding: 0;
             overflow: hidden;
             background-color: #0b0914;
             font-family: 'Gothic A1', 'Noto Sans JP', sans-serif;
             color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .pixel-font { font-family: 'Press Start 2P', cursive; }
         .jp-font { font-family: 'Noto Sans JP', sans-serif; }
-        canvas {
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
+        
+        /* 메인 게임 영역 크기 고정 및 찌그러짐 방지 */
+        #game-wrapper {
+            width: 100%;
+            max-width: 800px;
+            height: 95vh;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 8px;
         }
+
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            background-color: #000000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 4px solid #1e293b;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            image-rendering: pixelated;
+        }
+
         .retro-box {
             background-color: rgba(22, 14, 38, 0.98);
             border: 4px solid #f6d6bd;
@@ -64,146 +95,148 @@
         .d-btn:active { background: rgba(255, 255, 255, 0.6); }
     </style>
 </head>
-<body class="h-[100dvh] w-screen flex flex-col justify-between items-center p-2">
+<body>
 
-    <!-- Header Banner -->
-    <header class="w-full max-w-4xl flex justify-between items-center px-3 py-1.5 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg flex-shrink-0 mb-1">
-        <div class="flex items-center space-x-2">
-            <span class="text-xl animate-pulse">🏮</span>
-            <div>
-                <h1 class="text-xs sm:text-base font-extrabold text-amber-300 tracking-wider">まつり やたい RPG</h1>
-                <p class="text-[10px] sm:text-xs text-rose-300">가능/불가능 표현 (~できます / ~できません)</p>
-            </div>
-        </div>
-        
-        <div class="flex items-center space-x-2 text-xs">
-            <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 flex items-center gap-1">
-                <span>❤️</span>
-                <span id="hp-count" class="font-bold text-rose-400 text-xs sm:text-sm">3/3</span>
-            </div>
-            <button id="tts-toggle-btn" class="bg-red-950 hover:bg-red-900 text-rose-200 px-2.5 py-1 rounded-lg border border-red-700 flex items-center gap-1 text-[11px] sm:text-xs">
-                <span id="tts-icon">🔊</span>
-                <span id="tts-status">음성 ON</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Game Viewport Wrapper -->
-    <div id="canvas-container" class="relative w-full max-w-4xl flex-1 bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center min-h-0">
-        
-        <canvas id="gameCanvas" class="w-full h-full block"></canvas>
-
-        <!-- Desktop Control Hint -->
-        <div class="hidden md:flex absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 gap-2 items-center pointer-events-none z-10">
-            <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">방향키 / WASD</span> 이동
-            <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">Space / Enter</span> 대화
-        </div>
-
-        <!-- Food Inventory Tray -->
-        <div class="absolute top-2 left-2 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-xl border border-amber-500/40 flex items-center gap-1.5 text-xs z-10">
-            <span class="font-bold text-amber-300 text-[11px]">🍱 음식:</span>
-            <div id="food-tray" class="flex gap-1 text-sm sm:text-base">
-                <span id="item-takoyaki" class="opacity-30 transition-opacity" title="たこやき">🐙</span>
-                <span id="item-okonomiyaki" class="opacity-30 transition-opacity" title="おこのみやき">🥞</span>
-                <span id="item-yakisoba" class="opacity-30 transition-opacity" title="やきそば">🥢</span>
-                <span id="item-ramen" class="opacity-30 transition-opacity" title="ラーメン">🍜</span>
-                <span id="item-melonsoda" class="opacity-30 transition-opacity" title="メロンソーダ">🍹</span>
-            </div>
-        </div>
-
-        <!-- Dialogue / Quiz Modal Popup -->
-        <div id="dialogue-box" class="hidden absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 z-30">
-            <div class="retro-box w-full max-w-xl p-4 rounded-2xl text-white flex flex-col space-y-3 max-h-[90%] overflow-y-auto">
-                
-                <div class="flex justify-between items-center border-b border-red-900/60 pb-2">
-                    <div class="flex items-center space-x-2">
-                        <span id="npc-avatar" class="text-2xl sm:text-3xl">🐙</span>
-                        <div>
-                            <h3 id="npc-title" class="jp-font font-bold text-amber-300 text-xs sm:text-base">たこやき やたい</h3>
-                            <p id="npc-topic" class="jp-font text-[10px] sm:text-xs text-rose-200">학습: おもちかえり</p>
-                        </div>
-                    </div>
-                    <button id="close-dialogue-btn" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
+    <div id="game-wrapper">
+        <!-- Header Banner -->
+        <header class="w-full flex justify-between items-center px-3 py-2 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg flex-shrink-0 mb-2">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl animate-pulse">🏮</span>
+                <div>
+                    <h1 class="text-xs sm:text-base font-extrabold text-amber-300 tracking-wider">まつり やたい RPG</h1>
+                    <p class="text-[10px] sm:text-xs text-rose-300">가능/불가능 표현 (~できます / ~できません)</p>
                 </div>
-
-                <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
-                    <div class="flex items-center justify-between text-[11px] text-rose-300 font-semibold">
-                        <span id="situation-badge" class="bg-red-950 px-2 py-0.5 rounded text-amber-200 border border-red-800">야타이 조건</span>
-                        <button id="speak-prompt-btn" class="hover:text-amber-300 flex items-center gap-1 text-[11px]">
-                            📢 질문 다시듣기
-                        </button>
-                    </div>
-                    <p id="situation-text" class="text-xs sm:text-sm text-slate-300">이 야타이는 포장이 가능합니다.</p>
-                    <div class="pt-1 border-t border-slate-800/80">
-                        <p class="text-[11px] text-slate-400">손님의 질문 (A):</p>
-                        <p id="question-text" class="jp-font font-bold text-base sm:text-xl text-amber-300 tracking-wide">「おもちかえりが できますか。」</p>
-                    </div>
-                </div>
-
-                <div id="quiz-options-container" class="grid grid-cols-1 gap-2 pt-1"></div>
-
-                <div id="feedback-area" class="hidden p-2.5 rounded-xl text-xs sm:text-sm font-semibold flex flex-col space-y-2 bg-slate-900/90 border border-slate-800">
-                    <div id="feedback-status" class="flex items-center space-x-2 text-xs sm:text-sm font-bold"></div>
-                    
-                    <div id="audio-dialogue-box" class="bg-slate-950 p-2 rounded-lg border border-amber-500/30 text-[11px] sm:text-xs space-y-1">
-                        <p class="text-amber-400 font-bold">🗣️ 전체 대화 읽기 (A & B):</p>
-                        <p id="dialogue-a-line" class="jp-font text-slate-300">A: </p>
-                        <p id="dialogue-b-line" class="jp-font text-emerald-400 font-bold">B: </p>
-                    </div>
-
-                    <p id="feedback-explanation" class="jp-font text-slate-200 leading-relaxed text-[11px] sm:text-xs"></p>
-                    <button id="next-action-btn" class="retro-btn-green py-2 px-4 rounded-xl font-bold text-white text-xs sm:text-sm self-end mt-1">
-                        다음으로 →
-                    </button>
-                </div>
-
             </div>
-        </div>
-
-        <!-- Start Overlay -->
-        <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-3 z-40 overflow-y-auto">
-            <div class="retro-box w-full max-w-lg p-4 sm:p-6 rounded-3xl text-center space-y-3 sm:space-y-4 border-4 border-amber-400 my-auto">
-                <div class="text-3xl sm:text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
-                <h2 class="jp-font text-lg sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
-                <p class="text-[11px] sm:text-xs text-rose-300 font-semibold">일본어 가능/불가능 표현 배우기</p>
-                
-                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-300 leading-relaxed">
-                    <p class="font-bold text-amber-400 text-xs">🎮 게임 방법 & 규칙:</p>
-                    <ul class="list-disc list-inside space-y-1 text-[11px] sm:text-xs">
-                        <li>축제 야시장(屋台)을 탐험하며 5명의 점원과 대화하세요.</li>
-                        <li>상황에 맞게 <strong>「はい、できます。」</strong> 또는 <strong>「あ、すみません。できません。」</strong>를 선택하세요.</li>
-                        <li>정답을 맞히면 음식을 획득하고 전체 대화를 들어봅니다.</li>
-                        <li>틀리면 하트(❤️)가 깎이며 해설이 나옵니다.</li>
-                    </ul>
+            
+            <div class="flex items-center space-x-2 text-xs">
+                <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 flex items-center gap-1">
+                    <span>❤️</span>
+                    <span id="hp-count" class="font-bold text-rose-400 text-xs sm:text-sm">3/3</span>
                 </div>
-
-                <button id="start-game-btn" class="retro-btn-green w-full py-3 rounded-2xl font-black text-white text-sm sm:text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
-                    ▶ スタート (시작하기)
+                <button id="tts-toggle-btn" class="bg-red-950 hover:bg-red-900 text-rose-200 px-2.5 py-1 rounded-lg border border-red-700 flex items-center gap-1 text-[11px] sm:text-xs">
+                    <span id="tts-icon">🔊</span>
+                    <span id="tts-status">음성 ON</span>
                 </button>
             </div>
+        </header>
+
+        <!-- Main Game Viewport Wrapper -->
+        <div id="canvas-container">
+            
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Desktop Control Hint -->
+            <div class="hidden md:flex absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 gap-2 items-center pointer-events-none z-10">
+                <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">방향키 / WASD</span> 이동
+                <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">Space / Enter</span> 대화
+            </div>
+
+            <!-- Food Inventory Tray -->
+            <div class="absolute top-2 left-2 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-xl border border-amber-500/40 flex items-center gap-1.5 text-xs z-10">
+                <span class="font-bold text-amber-300 text-[11px]">🍱 음식:</span>
+                <div id="food-tray" class="flex gap-1 text-sm sm:text-base">
+                    <span id="item-takoyaki" class="opacity-30 transition-opacity" title="たこやき">🐙</span>
+                    <span id="item-okonomiyaki" class="opacity-30 transition-opacity" title="おこのみやき">🥞</span>
+                    <span id="item-yakisoba" class="opacity-30 transition-opacity" title="やきそば">🥢</span>
+                    <span id="item-ramen" class="opacity-30 transition-opacity" title="ラーメン">🍜</span>
+                    <span id="item-melonsoda" class="opacity-30 transition-opacity" title="メロンソーダ">🍹</span>
+                </div>
+            </div>
+
+            <!-- Dialogue / Quiz Modal Popup -->
+            <div id="dialogue-box" class="hidden absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 z-30">
+                <div class="retro-box w-full max-w-xl p-4 rounded-2xl text-white flex flex-col space-y-3 max-h-[90%] overflow-y-auto">
+                    
+                    <div class="flex justify-between items-center border-b border-red-900/60 pb-2">
+                        <div class="flex items-center space-x-2">
+                            <span id="npc-avatar" class="text-2xl sm:text-3xl">🐙</span>
+                            <div>
+                                <h3 id="npc-title" class="jp-font font-bold text-amber-300 text-xs sm:text-base">たこやき やたい</h3>
+                                <p id="npc-topic" class="jp-font text-[10px] sm:text-xs text-rose-200">학습: おもちかえり</p>
+                            </div>
+                        </div>
+                        <button id="close-dialogue-btn" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
+                    </div>
+
+                    <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="flex items-center justify-between text-[11px] text-rose-300 font-semibold">
+                            <span id="situation-badge" class="bg-red-950 px-2 py-0.5 rounded text-amber-200 border border-red-800">야타이 조건</span>
+                            <button id="speak-prompt-btn" class="hover:text-amber-300 flex items-center gap-1 text-[11px]">
+                                📢 질문 다시듣기
+                            </button>
+                        </div>
+                        <p id="situation-text" class="text-xs sm:text-sm text-slate-300">이 야타이는 포장이 가능합니다.</p>
+                        <div class="pt-1 border-t border-slate-800/80">
+                            <p class="text-[11px] text-slate-400">손님의 질문 (A):</p>
+                            <p id="question-text" class="jp-font font-bold text-base sm:text-xl text-amber-300 tracking-wide">「おもちかえりが できますか。」</p>
+                        </div>
+                    </div>
+
+                    <div id="quiz-options-container" class="grid grid-cols-1 gap-2 pt-1"></div>
+
+                    <div id="feedback-area" class="hidden p-2.5 rounded-xl text-xs sm:text-sm font-semibold flex flex-col space-y-2 bg-slate-900/90 border border-slate-800">
+                        <div id="feedback-status" class="flex items-center space-x-2 text-xs sm:text-sm font-bold"></div>
+                        
+                        <div id="audio-dialogue-box" class="bg-slate-950 p-2 rounded-lg border border-amber-500/30 text-[11px] sm:text-xs space-y-1">
+                            <p class="text-amber-400 font-bold">🗣️ 전체 대화 읽기 (A & B):</p>
+                            <p id="dialogue-a-line" class="jp-font text-slate-300">A: </p>
+                            <p id="dialogue-b-line" class="jp-font text-emerald-400 font-bold">B: </p>
+                        </div>
+
+                        <p id="feedback-explanation" class="jp-font text-slate-200 leading-relaxed text-[11px] sm:text-xs"></p>
+                        <button id="next-action-btn" class="retro-btn-green py-2 px-4 rounded-xl font-bold text-white text-xs sm:text-sm self-end mt-1">
+                            다음으로 →
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Start Overlay -->
+            <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-3 z-40 overflow-y-auto">
+                <div class="retro-box w-full max-w-lg p-4 sm:p-6 rounded-3xl text-center space-y-3 sm:space-y-4 border-4 border-amber-400 my-auto">
+                    <div class="text-3xl sm:text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
+                    <h2 class="jp-font text-lg sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
+                    <p class="text-[11px] sm:text-xs text-rose-300 font-semibold">일본어 가능/불가능 표현 배우기</p>
+                    
+                    <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 text-left space-y-1.5 text-xs text-slate-300 leading-relaxed">
+                        <p class="font-bold text-amber-400 text-xs">🎮 게임 방법 & 규칙:</p>
+                        <ul class="list-disc list-inside space-y-1 text-[11px] sm:text-xs">
+                            <li>축제 야시장(屋台)을 탐험하며 5명의 점원과 대화하세요.</li>
+                            <li>상황에 맞게 <strong>「はい、できます。」</strong> 또는 <strong>「あ、すみません。できません。」</strong>를 선택하세요.</li>
+                            <li>정답을 맞히면 음식을 획득하고 전체 대화를 들어봅니다.</li>
+                            <li>틀리면 하트(❤️)가 깎이며 해설이 나옵니다.</li>
+                        </ul>
+                    </div>
+
+                    <button id="start-game-btn" class="retro-btn-green w-full py-3 rounded-2xl font-black text-white text-sm sm:text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
+                        ▶ スタート (시작하기)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Touch D-Pad & Action Button Overlay -->
+            <div class="md:hidden absolute bottom-3 left-3 right-3 flex justify-between items-end pointer-events-none z-20">
+                <div class="flex flex-col items-center pointer-events-auto">
+                    <div class="flex justify-center">
+                        <button id="btn-up" class="d-btn w-9 h-9 rounded-t-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">▲</button>
+                    </div>
+                    <div class="flex space-x-6">
+                        <button id="btn-left" class="d-btn w-9 h-9 rounded-l-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">◀</button>
+                        <button id="btn-right" class="d-btn w-9 h-9 rounded-r-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">▶</button>
+                    </div>
+                    <div class="flex justify-center">
+                        <button id="btn-down" class="d-btn w-9 h-9 rounded-b-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">▼</button>
+                    </div>
+                </div>
+
+                <button id="mobile-interact-btn" class="pointer-events-auto retro-btn bg-amber-600 border-amber-300 text-amber-100 px-4 py-3 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-1 active:scale-95">
+                    <span class="text-base">💬</span>
+                    <span>대화하기</span>
+                </button>
+            </div>
+
         </div>
-
-    </div>
-
-    <!-- Mobile Touch D-Pad & Action Button Container -->
-    <div class="md:hidden w-full max-w-4xl flex justify-between items-center px-4 py-1 flex-shrink-0 mt-1">
-        <div class="flex flex-col items-center">
-            <div class="flex justify-center">
-                <button id="btn-up" class="d-btn w-8 h-8 rounded-t-xl flex items-center justify-center text-white font-bold text-xs active:bg-white/50">▲</button>
-            </div>
-            <div class="flex space-x-5">
-                <button id="btn-left" class="d-btn w-8 h-8 rounded-l-xl flex items-center justify-center text-white font-bold text-xs active:bg-white/50">◀</button>
-                <button id="btn-right" class="d-btn w-8 h-8 rounded-r-xl flex items-center justify-center text-white font-bold text-xs active:bg-white/50">▶</button>
-            </div>
-            <div class="flex justify-center">
-                <button id="btn-down" class="d-btn w-8 h-8 rounded-b-xl flex items-center justify-center text-white font-bold text-xs active:bg-white/50">▼</button>
-            </div>
-        </div>
-
-        <button id="mobile-interact-btn" class="retro-btn bg-amber-600 border-amber-300 text-amber-100 px-4 py-3 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-1 active:scale-95">
-            <span class="text-base">💬</span>
-            <span>대화하기</span>
-        </button>
     </div>
 
     <!-- Victory Modal -->
@@ -350,7 +383,7 @@
                 x: 2, y: 2,
                 allow: true,
                 situation: '이 야타이는 테이크아웃(포장)이 가능합니다.',
-                question: 'おもちかえりが できますか。',
+                question: 'おもちかえ리가 できますか。'.replace('おもちかえ리가', 'おもちかえりが'),
                 options: [
                     { text: 'はい、できます。', correct: true, cushion: false, exp: '정답입니다! 테이크아웃이 가능하므로 "はい、できます。"라고 답하여 🐙 たこやき를 얻었습니다!' },
                     { text: 'いいえ、できません。', correct: false, cushion: false, exp: '오답입니다. 이 야타이는 포장이 가능한 곳입니다.' },
