@@ -192,9 +192,9 @@
                     </div>
                 </div>
 
-                <button id="start-game-btn" class="retro-btn-green w-full py-3.5 rounded-2xl font-black text-white text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
-                    ▶ スタート (시작하기)
-                </button>
+                <button id="start-game-btn" onclick="document.getElementById('start-screen').style.display='none'; gameStarted=true; resizeCanvas(); requestAnimationFrame(gameLoop);" class="retro-btn-green w-full py-3.5 rounded-2xl font-black text-white text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
+    ▶ スタート (시작하기)
+</button>
             </div>
         </div>
 
