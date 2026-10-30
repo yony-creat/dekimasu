@@ -449,10 +449,11 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        function resizeCanvas() {
-            canvas.width = 660;
-            canvas.height = 600;
-        }
+      function resizeCanvas() {
+  const container = document.getElementById('canvas-container');
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;anjf
+}
         resizeCanvas();
 
         // -------------------------------------------------------------
