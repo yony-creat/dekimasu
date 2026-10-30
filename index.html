@@ -367,13 +367,13 @@
         <ul>
           <li><strong>이동:</strong> 키보드 방향키 / WASD / 화면 하단 터치패드</li>
           <li><strong>대화:</strong> 야타이에 접근 후 <strong>[하단 TALK 버튼]</strong> 또는 <strong>Spacebar</strong></li>
-          <li><strong>목표:</strong> 5개의 야타이 점원과 대화하며 질문에 올바르게 대답하세요!</li>
+          <li><strong>목표:</strong> 5개의 야타이 점원과 대화하며 상황에 맞게 대답하세요!</li>
           <li><strong>보상:</strong> 정답을 맞히면 맛있는 축제 음식(타코야끼, 오코노미야끼 등)을 획득합니다.</li>
           <li><strong>주의:</strong> 틀리면 하트가 줄어듭니다! (쿠션어 해설 포함)</li>
         </ul>
       </div>
 
-      <button class="btn-start" onclick="startGame()">▶ はじめる (시작하기)</button>
+      <button class="btn-start" onclick="startGame()">▶ スタート (시작하기)</button>
     </div>
 
     <div id="dialogue-modal">
@@ -447,7 +447,7 @@
       question: "おかわりが できますか。",
       correctAnswer: "はい、できます。",
       wrongAnswer: "あ、もうしわけございません。できません。",
-      explanation: "이 가게는 면 리필(おかわり)이 가능합니다! 「はい、できます。」가 정답입니다.",
+      explanation: "이 가게는 리필(おかわり)이 가능합니다! 「はい、できます。」가 정답입니다.",
       cleared: false
     },
     {
@@ -479,6 +479,7 @@
       cleared: false
     }
   ];
+
 
   let player = { x: 360, y: 480, size: 24, speed: 4, vx: 0, vy: 0 };
   let hearts = 3;
