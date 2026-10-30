@@ -19,13 +19,11 @@
             background-color: #0b0914;
             color: #ffffff;
             overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
         }
-        .pixel-font {
-            font-family: 'Press Start 2P', cursive;
-        }
-        .jp-font {
-            font-family: 'Noto Sans JP', sans-serif;
-        }
+        .pixel-font { font-family: 'Press Start 2P', cursive; }
+        .jp-font { font-family: 'Noto Sans JP', sans-serif; }
         canvas {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
@@ -55,31 +53,27 @@
             transform: translateY(3px);
             box-shadow: 0 1px 0 #0a240f;
         }
-        /* Touch D-Pad Styles */
         .d-btn {
             background: rgba(255, 255, 255, 0.22);
             border: 2px solid rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(4px);
         }
-        .d-btn:active {
-            background: rgba(255, 255, 255, 0.6);
-        }
+        .d-btn:active { background: rgba(255, 255, 255, 0.6); }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col justify-between items-center p-2 sm:p-4 bg-slate-950 overflow-hidden select-none">
+<body class="h-full w-screen flex flex-col justify-between items-center p-2 bg-slate-950 overflow-hidden select-none">
 
     <!-- Header Banner -->
-    <header class="w-full max-w-4xl flex justify-between items-center mb-1.5 px-3 py-2 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg flex-shrink-0">
+    <header class="w-full max-w-4xl flex justify-between items-center mb-1 px-3 py-1.5 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg flex-shrink-0">
         <div class="flex items-center space-x-2">
-            <span class="text-xl sm:text-2xl animate-pulse">🏮</span>
+            <span class="text-xl animate-pulse">🏮</span>
             <div>
                 <h1 class="text-xs sm:text-base font-extrabold text-amber-300 tracking-wider">まつり やたい RPG</h1>
                 <p class="text-[10px] sm:text-xs text-rose-300">가능/불가능 표현 (~できます / ~できません)</p>
             </div>
         </div>
         
-        <!-- Status: Hearts & Audio Toggle -->
-        <div class="flex items-center space-x-2 sm:space-x-3 text-xs">
+        <div class="flex items-center space-x-2 text-xs">
             <div class="bg-slate-800 px-2 py-1 rounded-lg border border-slate-700 flex items-center gap-1">
                 <span>❤️</span>
                 <span id="hp-count" class="font-bold text-rose-400 text-xs sm:text-sm">3/3</span>
@@ -91,21 +85,20 @@
         </div>
     </header>
 
-    <!-- Main Game Viewport Wrapper (모바일과 PC 대응) -->
-    <div id="canvas-container" class="relative w-full max-w-4xl flex-1 md:aspect-[4/3] bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center">
+    <!-- Main Game Viewport Wrapper -->
+    <div id="canvas-container" class="relative w-full max-w-4xl flex-1 bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center min-h-0">
         
-        <!-- Canvas for Game World -->
         <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
-        <!-- On-Screen Controls Hint (Desktop) -->
+        <!-- Desktop Control Hint -->
         <div class="hidden md:flex absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 gap-2 items-center pointer-events-none z-10">
             <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">방향키 / WASD</span> 이동
             <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">Space / Enter</span> 대화
         </div>
 
-        <!-- Food Tray Inventory Bar at Top-Left of Canvas -->
-        <div class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-amber-500/40 flex items-center gap-1.5 sm:gap-2 text-xs z-10">
-            <span class="font-bold text-amber-300 text-[11px] sm:text-xs">🍱 음식:</span>
+        <!-- Inventory Tray -->
+        <div class="absolute top-2 left-2 bg-slate-900/90 backdrop-blur-md px-2.5 py-1 rounded-xl border border-amber-500/40 flex items-center gap-1.5 text-xs z-10">
+            <span class="font-bold text-amber-300 text-[11px]">🍱 음식:</span>
             <div id="food-tray" class="flex gap-1 text-sm sm:text-base">
                 <span id="item-takoyaki" class="opacity-30 transition-opacity" title="たこやき">🐙</span>
                 <span id="item-okonomiyaki" class="opacity-30 transition-opacity" title="おこのみやき">🥞</span>
@@ -115,11 +108,10 @@
             </div>
         </div>
 
-        <!-- Dialogue / Quiz Overlay Popup -->
+        <!-- Dialogue / Quiz Modal -->
         <div id="dialogue-box" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-2 sm:p-6 z-30 transition-all duration-200">
-            <div class="retro-box w-full max-w-xl p-3 sm:p-6 rounded-2xl text-white flex flex-col space-y-3 sm:space-y-4 animate-fade-in relative max-h-[90%] overflow-y-auto">
+            <div class="retro-box w-full max-w-xl p-3 sm:p-6 rounded-2xl text-white flex flex-col space-y-3 animate-fade-in relative max-h-[95%] overflow-y-auto">
                 
-                <!-- Station Title Header -->
                 <div class="flex justify-between items-center border-b border-red-900/60 pb-2">
                     <div class="flex items-center space-x-2">
                         <span id="npc-avatar" class="text-2xl sm:text-3xl">🐙</span>
@@ -131,8 +123,7 @@
                     <button id="close-dialogue-btn" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
                 </div>
 
-                <!-- NPC Question / Prompt Context -->
-                <div class="bg-slate-900/90 p-2.5 sm:p-4 rounded-xl border border-slate-800 space-y-1.5">
+                <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
                     <div class="flex items-center justify-between text-[11px] text-rose-300 font-semibold">
                         <span id="situation-badge" class="bg-red-950 px-2 py-0.5 rounded text-amber-200 border border-red-800">야타이 조건</span>
                         <button id="speak-prompt-btn" class="hover:text-amber-300 flex items-center gap-1 text-[11px]">
@@ -146,16 +137,11 @@
                     </div>
                 </div>
 
-                <!-- Quiz Options Container -->
-                <div id="quiz-options-container" class="grid grid-cols-1 gap-2 pt-1">
-                    <!-- Dynamic buttons injected here -->
-                </div>
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-2 pt-1"></div>
 
-                <!-- Feedback Area -->
-                <div id="feedback-area" class="hidden p-3 rounded-xl text-xs sm:text-sm font-semibold flex flex-col space-y-2 transition-all bg-slate-900/90 border border-slate-800">
+                <div id="feedback-area" class="hidden p-2.5 rounded-xl text-xs sm:text-sm font-semibold flex flex-col space-y-2 transition-all bg-slate-900/90 border border-slate-800">
                     <div id="feedback-status" class="flex items-center space-x-2 text-xs sm:text-sm font-bold"></div>
                     
-                    <!-- Audio Dialogue Playback Box -->
                     <div id="audio-dialogue-box" class="bg-slate-950 p-2 rounded-lg border border-amber-500/30 text-[11px] sm:text-xs space-y-1">
                         <p class="text-amber-400 font-bold">🗣️ 전체 대화 읽기 (A & B):</p>
                         <p id="dialogue-a-line" class="jp-font text-slate-300">A: </p>
@@ -171,8 +157,8 @@
             </div>
         </div>
 
-        <!-- Start Screen Overlay -->
-        <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-start justify-center p-3 sm:p-4 z-40 overflow-y-auto">
+        <!-- Start Overlay -->
+        <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-40 overflow-y-auto">
             <div class="retro-box w-full max-w-lg p-4 sm:p-6 rounded-3xl text-center space-y-3 sm:space-y-4 border-4 border-amber-400 my-auto">
                 <div class="text-3xl sm:text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
                 <h2 class="jp-font text-lg sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
@@ -196,25 +182,23 @@
 
     </div>
 
-    <!-- Touch D-Pad & Action Button Area (모바일 세로 하단 독립 배치) -->
-    <div class="md:hidden w-full max-w-4xl flex justify-between items-center px-4 py-2 mt-1 flex-shrink-0">
-        <!-- Touch D-Pad -->
+    <!-- Touch Controls Area -->
+    <div class="md:hidden w-full max-w-4xl flex justify-between items-center px-4 py-1.5 flex-shrink-0">
         <div class="flex flex-col items-center">
             <div class="flex justify-center">
-                <button id="btn-up" class="d-btn w-10 h-10 rounded-t-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">▲</button>
+                <button id="btn-up" class="d-btn w-9 h-9 rounded-t-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">▲</button>
             </div>
-            <div class="flex space-x-8">
-                <button id="btn-left" class="d-btn w-10 h-10 rounded-l-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">◀</button>
-                <button id="btn-right" class="d-btn w-10 h-10 rounded-r-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">▶</button>
+            <div class="flex space-x-6">
+                <button id="btn-left" class="d-btn w-9 h-9 rounded-l-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">◀</button>
+                <button id="btn-right" class="d-btn w-9 h-9 rounded-r-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">▶</button>
             </div>
             <div class="flex justify-center">
-                <button id="btn-down" class="d-btn w-10 h-10 rounded-b-xl flex items-center justify-center text-white font-bold text-base active:bg-white/50">▼</button>
+                <button id="btn-down" class="d-btn w-9 h-9 rounded-b-xl flex items-center justify-center text-white font-bold text-sm active:bg-white/50">▼</button>
             </div>
         </div>
 
-        <!-- Touch Interact Action Button -->
-        <button id="mobile-interact-btn" class="retro-btn bg-amber-600 border-amber-300 text-amber-100 px-5 py-4 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
-            <span class="text-lg">💬</span>
+        <button id="mobile-interact-btn" class="retro-btn bg-amber-600 border-amber-300 text-amber-100 px-5 py-3.5 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-1.5 active:scale-95">
+            <span class="text-base">💬</span>
             <span>대화하기</span>
         </button>
     </div>
@@ -263,11 +247,13 @@
                 if (!this.ctx) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                 }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
             },
             playBeep(freq = 440, type = 'sine', duration = 0.1) {
                 try {
                     this.init();
-                    if (this.ctx.state === 'suspended') this.ctx.resume();
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
                     osc.type = type;
@@ -281,24 +267,31 @@
                 } catch (e) {}
             },
             correct() {
-                this.playBeep(523.25, 'triangle', 0.15); // C5
-                setTimeout(() => this.playBeep(659.25, 'triangle', 0.15), 100); // E5
-                setTimeout(() => this.playBeep(783.99, 'triangle', 0.25), 200); // G5
+                this.playBeep(523.25, 'triangle', 0.15);
+                setTimeout(() => this.playBeep(659.25, 'triangle', 0.15), 100);
+                setTimeout(() => this.playBeep(783.99, 'triangle', 0.25), 200);
             },
             incorrect() {
                 this.playBeep(220, 'sawtooth', 0.2);
                 setTimeout(() => this.playBeep(185, 'sawtooth', 0.3), 150);
             },
-            step() {
-                this.playBeep(120, 'sine', 0.03);
-            },
-            interact() {
-                this.playBeep(440, 'square', 0.08);
-            }
+            step() { this.playBeep(120, 'sine', 0.03); },
+            interact() { this.playBeep(440, 'square', 0.08); }
         };
 
         // --- Japanese Text To Speech Utility ---
         let ttsEnabled = true;
+
+        // 오디오 잠금 해제 함수
+        function unlockAudio() {
+            soundEffect.init();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.resume();
+                const dummy = new SpeechSynthesisUtterance('');
+                dummy.volume = 0;
+                window.speechSynthesis.speak(dummy);
+            }
+        }
 
         function speakJapanese(text, onEndCallback = null) {
             if (!ttsEnabled || !('speechSynthesis' in window)) {
@@ -306,6 +299,8 @@
                 return;
             }
             window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
+            
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'ja-JP';
             utterance.rate = 0.85;
@@ -318,6 +313,7 @@
         function speakDialogueSequence(textA, textB) {
             if (!ttsEnabled || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
+            window.speechSynthesis.resume();
 
             const utterA = new SpeechSynthesisUtterance(textA);
             utterA.lang = 'ja-JP';
@@ -340,6 +336,7 @@
             ttsEnabled = !ttsEnabled;
             document.getElementById('tts-status').textContent = ttsEnabled ? '음성 ON' : '음성 OFF';
             document.getElementById('tts-icon').textContent = ttsEnabled ? '🔊' : '🔇';
+            if (ttsEnabled) unlockAudio();
         });
 
         // STALLS DATA
@@ -350,10 +347,10 @@
                 foodEmoji: '🐙',
                 name: 'たこやき やたい',
                 japanese: 'おもちかえり (포장)',
-                gridPos: { pc: { x: 2, y: 3 }, mobile: { x: 2, y: 3 } },
+                gridPos: { pc: { x: 2, y: 2 }, mobile: { x: 2, y: 2 } },
                 allow: true,
                 situation: '이 야타이는 테이크아웃(포장)이 가능합니다.',
-                question: 'おもちかえりが できますか。'.replace('おもちかえりが', 'おもちかえりが'),
+                question: 'おもちかえ리가 できますか。'.replace('おもちかえ리가', 'おもちかえ리가'.replace('리가', 'りが')),
                 options: [
                     { text: 'はい、できます。', correct: true, cushion: false, exp: '정답입니다! 테이크아웃이 가능하므로 "はい、できます。"라고 답하여 🐙 たこやき를 얻었습니다!' },
                     { text: 'いいえ、できません。', correct: false, cushion: false, exp: '오답입니다. 이 야타이는 포장이 가능한 곳입니다.' },
@@ -366,7 +363,7 @@
                 foodEmoji: '🥞',
                 name: 'おこのみやき やたい',
                 japanese: 'カード (카드)',
-                gridPos: { pc: { x: 5, y: 3 }, mobile: { x: 5, y: 5 } },
+                gridPos: { pc: { x: 5, y: 2 }, mobile: { x: 5, y: 4 } },
                 allow: false,
                 situation: '이 야타이는 현금 결제만 가능하고, 카드 결제가 불가능합니다.',
                 question: 'カードが できますか。',
@@ -382,7 +379,7 @@
                 foodEmoji: '🥢',
                 name: 'やきそば やたい',
                 japanese: 'おかわり (리필)',
-                gridPos: { pc: { x: 8, y: 3 }, mobile: { x: 8, y: 3 } },
+                gridPos: { pc: { x: 8, y: 2 }, mobile: { x: 8, y: 2 } },
                 allow: true,
                 situation: '이 야타이는 리필(おかわり)이 가능합니다.',
                 question: 'おかわりが できますか。',
@@ -398,7 +395,7 @@
                 foodEmoji: '🍜',
                 name: 'ラーメン やたい',
                 japanese: 'フリー Wi-Fi (무료 와이파이)',
-                gridPos: { pc: { x: 3, y: 7 }, mobile: { x: 3, y: 8 } },
+                gridPos: { pc: { x: 3, y: 6 }, mobile: { x: 3, y: 6 } },
                 allow: false,
                 situation: '이 야타이는 와이파이 설비가 없습니다 (Wi-Fi 불가능).',
                 question: 'フリー Wi-Fiが できますか。',
@@ -414,7 +411,7 @@
                 foodEmoji: '🍹',
                 name: 'メロンソーダ やたい',
                 japanese: 'おもちこみ (외부음식)',
-                gridPos: { pc: { x: 7, y: 7 }, mobile: { x: 7, y: 8 } },
+                gridPos: { pc: { x: 7, y: 6 }, mobile: { x: 7, y: 6 } },
                 allow: false,
                 situation: '이 야타이는 외부 음식/음료 반입이 금지되어 있습니다.',
                 question: 'おもちこみが できますか。',
@@ -426,12 +423,12 @@
             }
         ];
 
-        // GAME STATE & ENGINE
+        // GAME STATE
         let GRID_COLS = 11;
-        let GRID_ROWS = 10;
+        let GRID_ROWS = 8;
         
         const state = {
-            player: { x: 5, y: 9, dir: 'up' },
+            player: { x: 5, y: 7, dir: 'up' },
             hp: 3,
             maxHp: 3,
             inventory: new Set(),
@@ -448,13 +445,6 @@
             if (container) {
                 canvas.width = container.clientWidth;
                 canvas.height = container.clientHeight;
-
-                // 모바일 세로 화면 대응
-                if (window.innerWidth < 768 && canvas.height > canvas.width) {
-                    GRID_ROWS = 11;
-                } else {
-                    GRID_ROWS = 10;
-                }
             }
         }
 
@@ -465,143 +455,145 @@
         function drawGame() {
             if (!canvas.width || !canvas.height) resizeCanvas();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const tileSize = canvas.width / GRID_COLS;
+            
+            const tileW = canvas.width / GRID_COLS;
+            const tileH = canvas.height / GRID_ROWS;
             const isMobile = window.innerWidth < 768;
 
-            // 1. 바닥 패턴
+            // 1. 바닥
             for (let r = 0; r < GRID_ROWS; r++) {
                 for (let c = 0; c < GRID_COLS; c++) {
                     const isEven = (r + c) % 2 === 0;
                     ctx.fillStyle = isEven ? '#1e1b2e' : '#171424';
-                    ctx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                    ctx.fillRect(c * tileW, r * tileH, tileW, tileH);
                     
                     ctx.strokeStyle = '#110e1c';
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                    ctx.strokeRect(c * tileW, r * tileH, tileW, tileH);
                 }
             }
 
-            // 2. 등불 장식
+            // 2. 등불
             ctx.strokeStyle = '#852d3a';
             ctx.lineWidth = 3;
             ctx.beginPath();
-            ctx.moveTo(0, 30);
-            ctx.quadraticCurveTo(canvas.width / 2, 60, canvas.width, 30);
+            ctx.moveTo(0, 20);
+            ctx.quadraticCurveTo(canvas.width / 2, 45, canvas.width, 20);
             ctx.stroke();
 
             const lanternPositions = [0.8, 2.2, 3.8, 5.2, 6.8, 8.2, 9.8];
             lanternPositions.forEach((pos, idx) => {
-                const lx = pos * tileSize;
-                const ly = 35 + Math.sin((lanternAnimFrame + idx * 10) * 0.1) * 3;
+                const lx = pos * tileW;
+                const ly = 25 + Math.sin((lanternAnimFrame + idx * 10) * 0.1) * 3;
                 
-                const grad = ctx.createRadialGradient(lx, ly + 15, 2, lx, ly + 15, 25);
+                const grad = ctx.createRadialGradient(lx, ly + 12, 2, lx, ly + 12, 20);
                 grad.addColorStop(0, 'rgba(255, 180, 50, 0.4)');
                 grad.addColorStop(1, 'rgba(255, 180, 50, 0)');
                 ctx.fillStyle = grad;
                 ctx.beginPath();
-                ctx.arc(lx, ly + 15, 25, 0, Math.PI * 2);
+                ctx.arc(lx, ly + 12, 20, 0, Math.PI * 2);
                 ctx.fill();
 
                 ctx.fillStyle = '#e63946';
-                ctx.fillRect(lx - 10, ly, 20, 24);
+                ctx.fillRect(lx - 8, ly, 16, 20);
                 ctx.fillStyle = '#ffb703';
-                ctx.fillRect(lx - 8, ly + 4, 16, 16);
+                ctx.fillRect(lx - 6, ly + 3, 12, 14);
                 ctx.fillStyle = '#000000';
-                ctx.font = '10px sans-serif';
-                ctx.fillText('祭', lx - 5, ly + 16);
+                ctx.font = '9px sans-serif';
+                ctx.fillText('祭', lx - 4, ly + 13);
             });
 
-            // 3. 야타이(포장마차) 랜더링
+            // 3. 야타이
             STATIONS.forEach(st => {
                 const pos = isMobile ? st.gridPos.mobile : st.gridPos.pc;
-                const sx = pos.x * tileSize;
-                const sy = pos.y * tileSize;
+                const sx = pos.x * tileW;
+                const sy = pos.y * tileH;
 
                 const isCompleted = state.inventory.has(st.id);
 
                 ctx.fillStyle = 'rgba(0,0,0,0.4)';
-                ctx.fillRect(sx + 4, sy + tileSize - 8, tileSize - 8, 12);
+                ctx.fillRect(sx + 4, sy + tileH - 6, tileW - 8, 8);
 
                 ctx.fillStyle = isCompleted ? '#2a9d8f' : '#e63946';
-                ctx.fillRect(sx + 2, sy + 4, tileSize - 4, 16);
+                ctx.fillRect(sx + 2, sy + 2, tileW - 4, 12);
                 ctx.fillStyle = '#ffffff';
                 for (let i = 0; i < 5; i++) {
-                    ctx.fillRect(sx + 2 + (i * 12), sy + 16, 6, 6);
+                    ctx.fillRect(sx + 2 + (i * (tileW / 5)), sy + 12, tileW / 10, 4);
                 }
 
                 ctx.fillStyle = '#8d5b4c';
-                ctx.fillRect(sx + 4, sy + 22, tileSize - 8, 26);
+                ctx.fillRect(sx + 4, sy + 16, tileW - 8, tileH - 22);
                 ctx.fillStyle = '#5c3a2f';
-                ctx.fillRect(sx + 6, sy + 24, tileSize - 12, 6);
+                ctx.fillRect(sx + 6, sy + 18, tileW - 12, 4);
 
-                ctx.font = `${Math.max(16, tileSize * 0.35)}px sans-serif`;
+                ctx.font = `${Math.min(tileW, tileH) * 0.4}px sans-serif`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(st.foodEmoji, sx + tileSize / 2, sy + tileSize * 0.45);
+                ctx.fillText(st.foodEmoji, sx + tileW / 2, sy + tileH * 0.45);
 
                 ctx.fillStyle = isCompleted ? '#10b981' : '#f59e0b';
-                ctx.fillRect(sx + 2, sy + tileSize - 16, tileSize - 4, 14);
+                ctx.fillRect(sx + 2, sy + tileH - 12, tileW - 4, 10);
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 9px "Noto Sans JP", sans-serif';
-                ctx.fillText(st.foodName, sx + tileSize / 2, sy + tileSize - 8);
+                ctx.font = 'bold 8px "Noto Sans JP", sans-serif';
+                ctx.fillText(st.foodName, sx + tileW / 2, sy + tileH - 6);
 
                 if (isCompleted) {
                     ctx.fillStyle = '#10b981';
                     ctx.beginPath();
-                    ctx.arc(sx + tileSize - 8, sy + 8, 8, 0, Math.PI * 2);
+                    ctx.arc(sx + tileW - 6, sy + 6, 6, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 10px sans-serif';
-                    ctx.fillText('✓', sx + tileSize - 8, sy + 8);
+                    ctx.font = 'bold 8px sans-serif';
+                    ctx.fillText('✓', sx + tileW - 6, sy + 6);
                 }
             });
 
-            // 4. 플레이어 캐릭터
-            const px = state.player.x * tileSize;
-            const py = state.player.y * tileSize;
+            // 4. 플레이어
+            const px = state.player.x * tileW;
+            const py = state.player.y * tileH;
 
             ctx.fillStyle = 'rgba(0,0,0,0.4)';
             ctx.beginPath();
-            ctx.ellipse(px + tileSize / 2, py + tileSize - 6, tileSize * 0.25, 6, 0, 0, Math.PI * 2);
+            ctx.ellipse(px + tileW / 2, py + tileH - 4, tileW * 0.25, 4, 0, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.fillStyle = '#3b82f6';
-            ctx.fillRect(px + tileSize * 0.2, py + tileSize * 0.35, tileSize * 0.6, tileSize * 0.5);
+            ctx.fillRect(px + tileW * 0.2, py + tileH * 0.35, tileW * 0.6, tileH * 0.5);
             ctx.fillStyle = '#f59e0b';
-            ctx.fillRect(px + tileSize * 0.2, py + tileSize * 0.55, tileSize * 0.6, 6);
+            ctx.fillRect(px + tileW * 0.2, py + tileH * 0.55, tileW * 0.6, 4);
 
             ctx.fillStyle = '#fde047';
             ctx.beginPath();
-            ctx.arc(px + tileSize / 2, py + tileSize * 0.3, tileSize * 0.25, Math.PI, 0);
+            ctx.arc(px + tileW / 2, py + tileH * 0.3, tileW * 0.25, Math.PI, 0);
             ctx.fill();
 
             ctx.fillStyle = '#ffedd5';
-            ctx.fillRect(px + tileSize * 0.25, py + tileSize * 0.3, tileSize * 0.5, tileSize * 0.2);
+            ctx.fillRect(px + tileW * 0.25, py + tileH * 0.3, tileW * 0.5, tileH * 0.2);
 
             ctx.fillStyle = '#000000';
             if (state.player.dir === 'down' || state.player.dir === 'up') {
-                ctx.fillRect(px + tileSize * 0.35, py + tileSize * 0.38, 3, 4);
-                ctx.fillRect(px + tileSize * 0.6, py + tileSize * 0.38, 3, 4);
+                ctx.fillRect(px + tileW * 0.35, py + tileH * 0.38, 2, 3);
+                ctx.fillRect(px + tileW * 0.6, py + tileH * 0.38, 2, 3);
             } else if (state.player.dir === 'left') {
-                ctx.fillRect(px + tileSize * 0.3, py + tileSize * 0.38, 3, 4);
-                ctx.fillRect(px + tileSize * 0.48, py + tileSize * 0.38, 3, 4);
+                ctx.fillRect(px + tileW * 0.3, py + tileH * 0.38, 2, 3);
+                ctx.fillRect(px + tileW * 0.48, py + tileH * 0.38, 2, 3);
             } else if (state.player.dir === 'right') {
-                ctx.fillRect(px + tileSize * 0.5, py + tileSize * 0.38, 3, 4);
-                ctx.fillRect(px + tileSize * 0.68, py + tileSize * 0.38, 3, 4);
+                ctx.fillRect(px + tileW * 0.5, py + tileH * 0.38, 2, 3);
+                ctx.fillRect(px + tileW * 0.68, py + tileH * 0.38, 2, 3);
             }
 
             const nearbyStation = getNearbyStation();
             if (nearbyStation && !state.isDialogueOpen && state.isGameActive) {
-                const bx = px + tileSize / 2;
-                const by = py - 12;
+                const bx = px + tileW / 2;
+                const by = py - 10;
 
                 ctx.fillStyle = '#ffffff';
                 ctx.beginPath();
-                ctx.roundRect(bx - 36, by - 18, 72, 22, 8);
+                ctx.roundRect(bx - 32, by - 16, 64, 18, 6);
                 ctx.fill();
 
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 11px sans-serif';
+                ctx.font = 'bold 10px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText('💬 대화하기', bx, by - 4);
             }
@@ -670,7 +662,7 @@
 
             station.options.forEach((opt, idx) => {
                 const btn = document.createElement('button');
-                btn.className = 'retro-btn w-full p-2.5 sm:p-3 rounded-xl text-left font-bold text-amber-100 text-xs sm:text-sm flex items-center justify-between hover:border-amber-300 transition-all';
+                btn.className = 'retro-btn w-full p-2.5 rounded-xl text-left font-bold text-amber-100 text-xs sm:text-sm flex items-center justify-between hover:border-amber-300 transition-all';
                 btn.innerHTML = `
                     <span class="jp-font">${idx + 1}. ${opt.text}</span>
                     <span class="text-amber-400">선택 ➔</span>
@@ -786,7 +778,7 @@
         function resetGame() {
             state.hp = 3;
             state.inventory.clear();
-            state.player = { x: 5, y: 10, dir: 'up' };
+            state.player = { x: 5, y: 7, dir: 'up' };
             state.isGameActive = true;
             state.isDialogueOpen = false;
 
@@ -800,7 +792,9 @@
             drawGame();
         }
 
+        // 시작 버튼 터치/클릭 시 오디오 잠금 해제 실행
         document.getElementById('start-game-btn').addEventListener('click', () => {
+            unlockAudio();
             soundEffect.interact();
             document.getElementById('start-screen').classList.add('hidden');
             state.isGameActive = true;
@@ -814,6 +808,7 @@
         });
 
         window.addEventListener('keydown', (e) => {
+            unlockAudio();
             if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') movePlayer(0, -1, 'up');
             else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') movePlayer(0, 1, 'down');
             else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') movePlayer(-1, 0, 'left');
@@ -821,17 +816,18 @@
             else if (e.key === ' ' || e.key === 'Enter') interact();
         });
 
-        document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(0, -1, 'up'); });
-        document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(0, 1, 'down'); });
-        document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1, 0, 'left'); });
-        document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(1, 0, 'right'); });
-        document.getElementById('mobile-interact-btn').addEventListener('touchstart', (e) => { e.preventDefault(); interact(); });
+        const handleMobileBtn = (id, action) => {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); unlockAudio(); action(); });
+            btn.addEventListener('click', () => { unlockAudio(); action(); });
+        };
 
-        document.getElementById('btn-up').addEventListener('click', () => movePlayer(0, -1, 'up'));
-        document.getElementById('btn-down').addEventListener('click', () => movePlayer(0, 1, 'down'));
-        document.getElementById('btn-left').addEventListener('click', () => movePlayer(-1, 0, 'left'));
-        document.getElementById('btn-right').addEventListener('click', () => movePlayer(1, 0, 'right'));
-        document.getElementById('mobile-interact-btn').addEventListener('click', () => interact());
+        handleMobileBtn('btn-up', () => movePlayer(0, -1, 'up'));
+        handleMobileBtn('btn-down', () => movePlayer(0, 1, 'down'));
+        handleMobileBtn('btn-left', () => movePlayer(-1, 0, 'left'));
+        handleMobileBtn('btn-right', () => movePlayer(1, 0, 'right'));
+        handleMobileBtn('mobile-interact-btn', () => interact());
 
         document.getElementById('close-dialogue-btn').addEventListener('click', closeDialogue);
         document.getElementById('speak-prompt-btn').addEventListener('click', () => {
