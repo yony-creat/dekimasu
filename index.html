@@ -1,750 +1,872 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>にほんの やたい まつり</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: #0d0b14;
-      color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
-    #game-container {
-      position: relative;
-      width: 100vw;
-      max-width: 800px;
-      height: 100vh;
-      max-height: 600px;
-      background: #181425;
-      box-shadow: 0 0 30px rgba(0,0,0,0.9);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border-radius: 12px;
-      border: 1px solid #2a243d;
-    }
-
-    /* Top HUD */
-    #hud {
-      height: 50px;
-      background: #211a30;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 15px;
-      border-bottom: 2px solid #372e4a;
-      z-index: 10;
-    }
-
-    .hud-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #ffcc00;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .hud-status {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .hearts {
-      color: #ff4757;
-      font-size: 18px;
-      letter-spacing: 2px;
-    }
-
-    .score {
-      font-size: 14px;
-      color: #2ed573;
-      font-weight: bold;
-    }
-
-    /* Canvas Area */
-    #canvas-container {
-      flex: 1;
-      position: relative;
-      width: 100%;
-      height: calc(100% - 50px);
-      background: #110e19;
-    }
-
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      image-rendering: pixelated;
-    }
-
-    /* Start Overlay */
-    #start-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(13, 11, 20, 0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      text-align: center;
-      z-index: 100;
-    }
-
-    #start-screen h1 {
-      color: #ff4757;
-      font-size: 26px;
-      margin-bottom: 8px;
-      text-shadow: 2px 2px #000;
-    }
-
-    #start-screen h2 {
-      color: #ffcc00;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    .instructions {
-      background: #211a30;
-      border: 2px solid #372e4a;
-      border-radius: 12px;
-      padding: 15px;
-      max-width: 500px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #e0e0e0;
-      margin-bottom: 25px;
-      text-align: left;
-    }
-
-    .instructions ul {
-      margin-left: 20px;
-      margin-top: 8px;
-    }
-
-    .btn-start {
-      background: #2ed573;
-      color: #000;
-      border: none;
-      padding: 12px 35px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      box-shadow: 0 4px #26af5f;
-      transition: all 0.1s;
-    }
-
-    .btn-start:active {
-      transform: translateY(4px);
-      box-shadow: none;
-    }
-
-    /* Dialogue & Quiz Modal */
-    #dialogue-modal {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
-      max-width: 600px;
-      background: rgba(33, 26, 48, 0.96);
-      border: 3px solid #ffcc00;
-      border-radius: 12px;
-      padding: 15px;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      z-index: 50;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.8);
-    }
-
-    .speaker {
-      font-weight: bold;
-      color: #ffcc00;
-      font-size: 14px;
-    }
-
-    .dialogue-text {
-      font-size: 16px;
-      color: #ffffff;
-      line-height: 1.4;
-      min-height: 40px;
-    }
-
-    .options-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 5px;
-    }
-
-    .btn-option {
-      background: #372e4a;
-      color: #fff;
-      border: 2px solid #4f4368;
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.2s;
-    }
-
-    .btn-option:hover {
-      background: #4f4368;
-    }
-
-    .btn-option:active {
-      background: #ffcc00;
-      color: #000;
-    }
-
-    #feedback-box {
-      font-size: 14px;
-      padding: 8px;
-      border-radius: 6px;
-      display: none;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .feedback-correct {
-      background: rgba(46, 213, 115, 0.2);
-      color: #2ed573;
-      border: 1px solid #2ed573;
-    }
-
-    .feedback-wrong {
-      background: rgba(255, 71, 87, 0.2);
-      color: #ff4757;
-      border: 1px solid #ff4757;
-    }
-
-    /* Mobile Controls */
-    #mobile-controls {
-      position: absolute;
-      bottom: 15px;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 0 20px;
-      pointer-events: none;
-      z-index: 20;
-    }
-
-    .dpad {
-      display: grid;
-      grid-template-columns: repeat(3, 45px);
-      grid-template-rows: repeat(3, 45px);
-      gap: 5px;
-      pointer-events: auto;
-    }
-
-    .dbtn {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 18px;
-      touch-action: manipulation;
-    }
-
-    .dbtn:active {
-      background: rgba(255, 204, 0, 0.5);
-    }
-
-    .action-btn-container {
-      display: flex;
-      align-items: flex-end;
-      pointer-events: auto;
-    }
-
-    .btn-talk {
-      width: 65px;
-      height: 65px;
-      border-radius: 50%;
-      background: rgba(255, 71, 87, 0.85);
-      border: 2px solid #ffffff;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      touch-action: manipulation;
-    }
-
-    .btn-talk:active {
-      transform: scale(0.95);
-      background: #ff4757;
-    }
-
-    /* Inventory Bar */
-    #inventory-bar {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid #ffcc00;
-      border-radius: 20px;
-      padding: 5px 12px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      z-index: 10;
-    }
-
-    .food-icon {
-      font-size: 18px;
-      opacity: 0.3;
-      transition: opacity 0.3s, transform 0.3s;
-    }
-
-    .food-icon.acquired {
-      opacity: 1;
-      transform: scale(1.2);
-    }
-  </style>
-</head>
-<body>
-
-<div id="game-container">
-  <div id="hud">
-    <div class="hud-title">
-      <span>🏮</span> にほんの やたい まつり
-    </div>
-    <div class="hud-status">
-      <div class="hearts" id="hearts">❤️❤️❤️</div>
-      <div class="score" id="score-text">かくとく: 0 / 5</div>
-    </div>
-  </div>
-
-  <div id="canvas-container">
-    <canvas id="gameCanvas"></canvas>
-
-    <div id="inventory-bar">
-      <span class="food-icon" id="food-0" title="たこやき">🐙</span>
-      <span class="food-icon" id="food-1" title="おこのみやき">🥞</span>
-      <span class="food-icon" id="food-2" title="やきそば">🥢</span>
-      <span class="food-icon" id="food-3" title="ラーメン">🍜</span>
-      <span class="food-icon" id="food-4" title="メロンソーダ">🍹</span>
-    </div>
-
-    <div id="start-screen">
-      <h1>🏮 にほんの やたい まつり 🏮</h1>
-      <h2>가능 / 불가능 표현 학습 게임</h2>
-      
-      <div class="instructions">
-        <strong>🎮 게임 방법:</strong>
-        <ul>
-          <li><strong>이동:</strong> 키보드 방향키 / WASD / 화면 하단 터치패드</li>
-          <li><strong>대화:</strong> 야타이에 접근 후 <strong>[하단 TALK 버튼]</strong> 또는 <strong>Spacebar</strong></li>
-          <li><strong>목표:</strong> 5개의 야타이 점원과 대화하며 상황에 맞게 대답하세요!</li>
-          <li><strong>보상:</strong> 정답을 맞히면 맛있는 축제 음식(타코야끼, 오코노미야끼 등)을 획득합니다.</li>
-          <li><strong>주의:</strong> 틀리면 하트가 줄어듭니다! (쿠션어 해설 포함)</li>
-        </ul>
-      </div>
-
-      <button class="btn-start" onclick="startGame()">▶ スタート (시작하기)</button>
-    </div>
-
-    <div id="dialogue-modal">
-      <div class="speaker" id="modal-speaker">🏮 やたい てんいん</div>
-      <div class="dialogue-text" id="modal-text">질문이 여기에 표시됩니다.</div>
-      <div id="feedback-box"></div>
-      <div class="options-grid" id="modal-options"></div>
-    </div>
-
-    <div id="mobile-controls">
-      <div class="dpad">
-        <div></div>
-        <div class="dbtn" id="btn-up">▲</div>
-        <div></div>
-        <div class="dbtn" id="btn-left">◀</div>
-        <div></div>
-        <div class="dbtn" id="btn-right">▶</div>
-        <div></div>
-        <div class="dbtn" id="btn-down">▼</div>
-        <div></div>
-      </div>
-      <div class="action-btn-container">
-        <div class="btn-talk" id="btn-action">TALK</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-
-  // 100% Hiragana & Katakana Only Data
-  const stalls = [
-    {
-      id: 0,
-      name: "たこやき やたい",
-      item: "たこやき",
-      icon: "🐙",
-      x: 120,
-      y: 120,
-      color: "#ff4757",
-      question: "おもちかえりが できますか。",
-      correctAnswer: "はい、できます。",
-      wrongAnswer: "あ、すみません。できません。",
-      explanation: "이 가게는 테이크아웃(おもちかえり)이 가능합니다! 「はい、できます。」가 정답입니다.",
-      cleared: false
-    },
-    {
-      id: 1,
-      name: "おこのみやき やたい",
-      item: "おこのみやき",
-      icon: "🥞",
-      x: 360,
-      y: 120,
-      color: "#ffa502",
-      question: "カードが できますか。",
-      correctAnswer: "あ、すみません。カードは できません。",
-      wrongAnswer: "はい、できます。",
-      explanation: "이 가게는 현금 결제만 가능합니다! 거절할 때는 쿠션어 「あ、すみません」을 붙여 「カードは できません」이라고 답합니다.",
-      cleared: false
-    },
-    {
-      id: 2,
-      name: "やきそば やたい",
-      item: "やきそば",
-      icon: "🥢",
-      x: 600,
-      y: 120,
-      color: "#2ed573",
-      question: "おかわりが できますか。",
-      correctAnswer: "はい、できます。",
-      wrongAnswer: "あ、もうしわけございません。できません。",
-      explanation: "이 가게는 리필(おかわり)이 가능합니다! 「はい、できます。」가 정답입니다.",
-      cleared: false
-    },
-    {
-      id: 3,
-      name: "ラーメン やたい",
-      item: "ラーメン",
-      icon: "🍜",
-      x: 220,
-      y: 320,
-      color: "#1e90ff",
-      question: "フリー Wi-Fiが できますか。",
-      correctAnswer: "はい、できます。",
-      wrongAnswer: "あ、すみません。できません。",
-      explanation: "무료 와이파이를 제공하는 매장입니다! 「はい、できます。」가 정답입니다.",
-      cleared: false
-    },
-    {
-      id: 4,
-      name: "メロンソーダ やたい",
-      item: "メロンソーダ",
-      icon: "🍹",
-      x: 500,
-      y: 320,
-      color: "#3742fa",
-      question: "おもちこみが できますか。",
-      correctAnswer: "あ、もうしわけございません。できません。",
-      wrongAnswer: "はい、できます。",
-      explanation: "외부 음식 반입(おもちこみ)은 금지되어 있습니다! 정중한 쿠션어 「あ、もうしわけございません」과 함께 「できません」을 사용합니다.",
-      cleared: false
-    }
-  ];
-
-
-  let player = { x: 360, y: 480, size: 24, speed: 4, vx: 0, vy: 0 };
-  let hearts = 3;
-  let score = 0;
-  let gameStarted = false;
-  let activeStall = null;
-  let isDialogueOpen = false;
-
-  const keys = {};
-
-  function resizeCanvas() {
-    const container = document.getElementById('canvas-container');
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
-  }
-  window.addEventListener('resize', resizeCanvas);
-
-  function speakJapanese(text, callback) {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const uttr = new SpeechSynthesisUtterance(text);
-      uttr.lang = 'ja-JP';
-      uttr.rate = 0.9;
-      if (callback) uttr.onend = callback;
-      window.speechSynthesis.speak(uttr);
-    } else if (callback) {
-      callback();
-    }
-  }
-
-  window.addEventListener('keydown', (e) => {
-    keys[e.key] = true;
-    if ((e.key === ' ' || e.key === 'Enter') && !isDialogueOpen && gameStarted) {
-      checkInteraction();
-    }
-  });
-
-  window.addEventListener('keyup', (e) => { keys[e.key] = false; });
-
-  function setupMobileControls() {
-    const bindTouch = (id, keyName) => {
-      const btn = document.getElementById(id);
-      if (!btn) return;
-      btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[keyName] = true; });
-      btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[keyName] = false; });
-      btn.addEventListener('mousedown', () => { keys[keyName] = true; });
-      btn.addEventListener('mouseup', () => { keys[keyName] = false; });
-    };
-
-    bindTouch('btn-up', 'ArrowUp');
-    bindTouch('btn-down', 'ArrowDown');
-    bindTouch('btn-left', 'ArrowLeft');
-    bindTouch('btn-right', 'ArrowRight');
-
-    document.getElementById('btn-action').addEventListener('click', () => {
-      if (!isDialogueOpen && gameStarted) checkInteraction();
-    });
-  }
-
-  function startGame() {
-    document.getElementById('start-screen').style.display = 'none';
-    gameStarted = true;
-    resizeCanvas();
-    requestAnimationFrame(gameLoop);
-  }
-
-  function checkInteraction() {
-    stalls.forEach(stall => {
-      const dist = Math.hypot(player.x - stall.x, player.y - stall.y);
-      if (dist < 50) openQuizModal(stall);
-    });
-  }
-
-  function openQuizModal(stall) {
-    activeStall = stall;
-    isDialogueOpen = true;
-
-    const modal = document.getElementById('dialogue-modal');
-    const speaker = document.getElementById('modal-speaker');
-    const text = document.getElementById('modal-text');
-    const optionsGrid = document.getElementById('modal-options');
-    const feedbackBox = document.getElementById('feedback-box');
-
-    feedbackBox.style.display = 'none';
-    speaker.innerText = `🏮 ${stall.name} (${stall.icon})`;
-    text.innerText = `お客さん(손님): 「${stall.question}」`;
-
-    speakJapanese(stall.question);
-
-    const opts = [stall.correctAnswer, stall.wrongAnswer];
-    if (Math.random() > 0.5) opts.reverse();
-
-    optionsGrid.innerHTML = '';
-    opts.forEach(optText => {
-      const btn = document.createElement('button');
-      btn.className = 'btn-option';
-      btn.innerText = optText;
-      btn.onclick = () => handleAnswerSelect(optText === stall.correctAnswer);
-      optionsGrid.appendChild(btn);
-    });
-
-    modal.style.display = 'flex';
-  }
-
-  function handleAnswerSelect(isCorrect) {
-    const feedbackBox = document.getElementById('feedback-box');
-    document.getElementById('modal-options').innerHTML = '';
-
-    if (isCorrect) {
-      feedbackBox.className = 'feedback-box feedback-correct';
-      feedbackBox.innerText = `⭕ せいかい! (${activeStall.item} 획득!)`;
-      feedbackBox.style.display = 'block';
-
-      if (!activeStall.cleared) {
-        activeStall.cleared = true;
-        score++;
-        document.getElementById(`food-${activeStall.id}`).classList.add('acquired');
-        document.getElementById('score-text').innerText = `かくとく: ${score} / 5`;
-      }
-
-      speakJapanese(activeStall.question, () => {
-        setTimeout(() => {
-          speakJapanese(activeStall.correctAnswer, () => {
-            setTimeout(closeDialogue, 1200);
-          });
-        }, 400);
-      });
-
-    } else {
-      hearts--;
-      updateHeartsHUD();
-
-      feedbackBox.className = 'feedback-box feedback-wrong';
-      feedbackBox.innerHTML = `❌ ざんねん!<br><span style="font-size:12px; font-weight:normal;">${activeStall.explanation}</span>`;
-      feedbackBox.style.display = 'block';
-
-      speakJapanese(activeStall.wrongAnswer, () => {
-        if (hearts <= 0) {
-          setTimeout(() => {
-            alert("게임 오버! 하트를 모두 소모했습니다. 다시 시작합니다.");
-            resetGame();
-          }, 1000);
-        } else {
-          setTimeout(closeDialogue, 2500);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>まつり やたい RPG - かのう / ふかのう ひょうげん</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pixel Font & Noto Sans JP -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+JP:wght@500;700;900&family=Gothic+A1:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
         }
-      });
-    }
-  }
+        body {
+            font-family: 'Gothic A1', 'Noto Sans JP', sans-serif;
+            background-color: #0b0914;
+            color: #ffffff;
+            overflow: hidden;
+        }
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+        }
+        .jp-font {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .retro-box {
+            background-color: rgba(22, 14, 38, 0.96);
+            border: 4px solid #f6d6bd;
+            box-shadow: 0 0 0 4px #5c1d24, inset 0 0 0 2px #221226;
+        }
+        .retro-btn {
+            background: linear-gradient(180deg, #602535 0%, #3a121e 100%);
+            border: 2px solid #fca5a5;
+            box-shadow: 0 4px 0 #180509;
+            transition: all 0.1s ease;
+        }
+        .retro-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #180509;
+        }
+        .retro-btn-green {
+            background: linear-gradient(180deg, #2b8a40 0%, #174e23 100%);
+            border: 2px solid #82f59f;
+            box-shadow: 0 4px 0 #0a240f;
+            transition: all 0.1s ease;
+        }
+        .retro-btn-green:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #0a240f;
+        }
+        /* Touch D-Pad Styles */
+        .d-btn {
+            background: rgba(255, 255, 255, 0.18);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .d-btn:active {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col justify-center items-center p-2 sm:p-4 bg-slate-950 overflow-hidden select-none">
 
-  function closeDialogue() {
-    document.getElementById('dialogue-modal').style.display = 'none';
-    isDialogueOpen = false;
+    <!-- Header Banner -->
+    <header class="w-full max-w-4xl flex justify-between items-center mb-2 px-3 py-2 bg-slate-900 border-2 border-red-900 rounded-xl shadow-lg">
+        <div class="flex items-center space-x-2">
+            <span class="text-2xl animate-pulse">🏮</span>
+            <div>
+                <h1 class="text-sm sm:text-base font-extrabold text-amber-300 tracking-wider">まつり やたい RPG</h1>
+                <p class="text-xs text-rose-300">가능/불가능 표현 (~できます / ~できません)</p>
+            </div>
+        </div>
+        
+        <!-- Status: Hearts & Audio Toggle -->
+        <div class="flex items-center space-x-3 text-xs sm:text-sm">
+            <div class="bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700 flex items-center gap-1">
+                <span>❤️</span>
+                <span id="hp-count" class="font-bold text-rose-400 text-sm">3/3</span>
+            </div>
+            <button id="tts-toggle-btn" class="bg-red-950 hover:bg-red-900 text-rose-200 px-2.5 py-1 rounded-lg border border-red-700 flex items-center gap-1 text-xs">
+                <span id="tts-icon">🔊</span>
+                <span id="tts-status">음성 ON</span>
+            </button>
+        </div>
+    </header>
 
-    if (score >= 5) {
-      setTimeout(() => {
-        alert("🎉 おめでとうございます! 모든 야타이 음식을 모아 축제를 완벽하게 즐겼습니다!");
-        resetGame();
-      }, 500);
-    }
-  }
+    <!-- Main Game Viewport Wrapper -->
+    <div class="relative w-full max-w-4xl aspect-[4/3] max-h-[65vh] bg-black rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl flex flex-col justify-center items-center">
+        
+        <!-- Canvas for Game World -->
+        <canvas id="gameCanvas" class="w-full h-full object-contain block"></canvas>
 
-  function updateHeartsHUD() {
-    let hStr = "";
-    for (let i = 0; i < 3; i++) {
-      hStr += (i < hearts) ? "❤️" : "🖤";
-    }
-    document.getElementById('hearts').innerText = hStr;
-  }
+        <!-- On-Screen Controls Hint (Desktop) -->
+        <div class="hidden md:flex absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700/80 text-[11px] text-slate-300 gap-2 items-center pointer-events-none">
+            <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">방향키 / WASD</span> 이동
+            <span class="bg-slate-800 border border-slate-600 px-1.5 py-0.5 rounded text-amber-300 font-mono">Space / Enter</span> 대화
+        </div>
 
-  function resetGame() {
-    hearts = 3;
-    score = 0;
-    updateHeartsHUD();
-    document.getElementById('score-text').innerText = `かくとく: 0 / 5`;
-    stalls.forEach(s => s.cleared = false);
-    for (let i = 0; i < 5; i++) {
-      document.getElementById(`food-${i}`).classList.remove('acquired');
-    }
-    player.x = canvas.width / 2;
-    player.y = canvas.height - 80;
-    closeDialogue();
-  }
+        <!-- Food Tray Inventory Bar at Top-Left of Canvas -->
+        <div class="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-500/40 flex items-center gap-2 text-xs">
+            <span class="font-bold text-amber-300">🍱 획득한 음식:</span>
+            <div id="food-tray" class="flex gap-1.5 text-base">
+                <span id="item-takoyaki" class="opacity-30 transition-opacity" title="たこやき">🐙</span>
+                <span id="item-okonomiyaki" class="opacity-30 transition-opacity" title="おこのみやき">🥞</span>
+                <span id="item-yakisoba" class="opacity-30 transition-opacity" title="やきそば">🥢</span>
+                <span id="item-ramen" class="opacity-30 transition-opacity" title="ラーメン">🍜</span>
+                <span id="item-melonsoda" class="opacity-30 transition-opacity" title="メロンソーダ">🍹</span>
+            </div>
+        </div>
 
-  function update() {
-    if (!gameStarted || isDialogueOpen) return;
+        <!-- Dialogue / Quiz Overlay Popup -->
+        <div id="dialogue-box" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3 sm:p-6 z-30 transition-all duration-200">
+            <div class="retro-box w-full max-w-xl p-4 sm:p-6 rounded-2xl text-white flex flex-col space-y-4 animate-fade-in relative">
+                
+                <!-- Station Title Header -->
+                <div class="flex justify-between items-center border-b border-red-900/60 pb-2">
+                    <div class="flex items-center space-x-2">
+                        <span id="npc-avatar" class="text-3xl">🐙</span>
+                        <div>
+                            <h3 id="npc-title" class="jp-font font-bold text-amber-300 text-sm sm:text-base">たこやき やたい</h3>
+                            <p id="npc-topic" class="jp-font text-xs text-rose-200">학습: おもちかえり</p>
+                        </div>
+                    </div>
+                    <button id="close-dialogue-btn" class="text-slate-400 hover:text-white text-lg font-bold px-2 py-1">✕</button>
+                </div>
 
-    player.vx = 0;
-    player.vy = 0;
+                <!-- NPC Question / Prompt Context -->
+                <div class="bg-slate-900/90 p-3 sm:p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between text-xs text-rose-300 font-semibold">
+                        <span id="situation-badge" class="bg-red-950 px-2 py-0.5 rounded text-amber-200 border border-red-800">야타이 조건</span>
+                        <button id="speak-prompt-btn" class="hover:text-amber-300 flex items-center gap-1 text-xs">
+                            📢 질문 다시듣기
+                        </button>
+                    </div>
+                    <p id="situation-text" class="text-xs sm:text-sm text-slate-300">이 야타이는 포장이 가능합니다.</p>
+                    <div class="pt-1 border-t border-slate-800/80">
+                        <p class="text-xs text-slate-400">손님의 질문 (A):</p>
+                        <p id="question-text" class="jp-font font-bold text-lg sm:text-xl text-amber-300 tracking-wide">「おもちかえりが できますか。」</p>
+                    </div>
+                </div>
 
-    if (keys['ArrowUp'] || keys['w'] || keys['W']) player.vy = -player.speed;
-    if (keys['ArrowDown'] || keys['s'] || keys['S']) player.vy = player.speed;
-    if (keys['ArrowLeft'] || keys['a'] || keys['A']) player.vx = -player.speed;
-    if (keys['ArrowRight'] || keys['d'] || keys['D']) player.vx = player.speed;
+                <!-- Quiz Options Container -->
+                <div id="quiz-options-container" class="grid grid-cols-1 gap-2.5 pt-1">
+                    <!-- Dynamic buttons injected here -->
+                </div>
 
-    player.x += player.vx;
-    player.y += player.vy;
+                <!-- Feedback Area -->
+                <div id="feedback-area" class="hidden p-3 rounded-xl text-xs sm:text-sm font-semibold flex flex-col space-y-2 transition-all bg-slate-900/90 border border-slate-800">
+                    <div id="feedback-status" class="flex items-center space-x-2 text-sm font-bold"></div>
+                    
+                    <!-- Audio Dialogue Playback Box -->
+                    <div id="audio-dialogue-box" class="bg-slate-950 p-2.5 rounded-lg border border-amber-500/30 text-xs space-y-1">
+                        <p class="text-amber-400 font-bold">🗣️ 전체 대화 읽기 (A & B):</p>
+                        <p id="dialogue-a-line" class="jp-font text-slate-300">A: </p>
+                        <p id="dialogue-b-line" class="jp-font text-emerald-400 font-bold">B: </p>
+                    </div>
 
-    player.x = Math.max(20, Math.min(canvas.width - 20, player.x));
-    player.y = Math.max(60, Math.min(canvas.height - 20, player.y));
-  }
+                    <p id="feedback-explanation" class="jp-font text-slate-200 leading-relaxed text-xs"></p>
+                    <button id="next-action-btn" class="retro-btn-green py-2 px-4 rounded-xl font-bold text-white text-xs sm:text-sm self-end mt-2">
+                        다음으로 →
+                    </button>
+                </div>
 
-  function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+            </div>
+        </div>
 
-    ctx.fillStyle = "#161224";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        <!-- Start Screen Overlay -->
+        <div id="start-screen" class="absolute inset-0 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 z-40">
+            <div class="retro-box w-full max-w-lg p-5 sm:p-6 rounded-3xl text-center space-y-4 border-4 border-amber-400">
+                <div class="text-4xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
+                <h2 class="jp-font text-xl sm:text-2xl font-black text-amber-300">まつり やたい RPG</h2>
+                <p class="text-xs text-rose-300 font-semibold">일본어 가능/불가능 표현 배우기</p>
+                
+                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-800 text-left space-y-2 text-xs text-slate-300 leading-relaxed">
+                    <p class="font-bold text-amber-400 text-xs">🎮 게임 방법 & 규칙:</p>
+                    <ul class="list-disc list-inside space-y-1 text-[11px] sm:text-xs">
+                        <li>축제 야시장(屋台)을 탐험하며 5명의 점원과 대화하세요.</li>
+                        <li>상황에 맞게 <strong>「はい、できます。」</strong> 또는 <strong>「あ、すみません。できません。」</strong>를 선택하세요.</li>
+                        <li>정답을 맞히면 맛있는 축제 음식을 획득하고 질문과 답변 **전체 대화**를 음성으로 듣습니다.</li>
+                        <li>틀리면 하트(❤️)가 깎이며, 정중한 쿠션어 해설이 나옵니다.</li>
+                    </ul>
+                    <div class="pt-2 border-t border-slate-800 flex justify-between text-[11px] text-slate-400">
+                        <span>⌨️ PC: 방향키/WASD + Enter</span>
+                        <span>📱 모바일: 화면 터치 패드</span>
+                    </div>
+                </div>
 
-    for (let x = 40; x < canvas.width; x += 80) {
-      ctx.fillStyle = "#ff4757";
-      ctx.beginPath();
-      ctx.arc(x, 25, 12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#ffcc00";
-      ctx.font = "10px sans-serif";
-      ctx.fillText("祭", x - 4, 28);
-    }
+                <button id="start-game-btn" class="retro-btn-green w-full py-3.5 rounded-2xl font-black text-white text-base shadow-xl border-2 border-emerald-300 tracking-widest hover:scale-105 active:scale-95 transition-all">
+                    ▶ スタート (시작하기)
+                </button>
+            </div>
+        </div>
 
-    stalls.forEach(stall => {
-      ctx.fillStyle = stall.color;
-      ctx.fillRect(stall.x - 35, stall.y - 30, 70, 20);
+        <!-- Touch D-Pad for Mobile/Tablet Users -->
+        <div class="md:hidden absolute bottom-3 left-3 z-20 flex flex-col items-center opacity-90">
+            <div class="flex justify-center">
+                <button id="btn-up" class="d-btn w-12 h-12 rounded-t-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">▲</button>
+            </div>
+            <div class="flex space-x-10">
+                <button id="btn-left" class="d-btn w-12 h-12 rounded-l-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">◀</button>
+                <button id="btn-right" class="d-btn w-12 h-12 rounded-r-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">▶</button>
+            </div>
+            <div class="flex justify-center">
+                <button id="btn-down" class="d-btn w-12 h-12 rounded-b-2xl flex items-center justify-center text-white font-bold text-xl active:bg-white/50">▼</button>
+            </div>
+        </div>
 
-      ctx.fillStyle = "#3d2b1f";
-      ctx.fillRect(stall.x - 30, stall.y - 10, 60, 40);
+        <!-- Touch Interact Action Button for Mobile/Tablet -->
+        <button id="mobile-interact-btn" class="md:hidden absolute bottom-4 right-4 z-20 retro-btn bg-amber-600 border-amber-300 text-amber-100 px-5 py-3.5 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-2 active:scale-95">
+            <span class="text-base">💬</span>
+            <span>대화하기</span>
+        </button>
 
-      ctx.font = "20px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(stall.icon, stall.x, stall.y + 15);
+    </div>
 
-      if (stall.cleared) {
-        ctx.fillStyle = "#2ed573";
-        ctx.font = "bold 14px sans-serif";
-        ctx.fillText("✓", stall.x + 22, stall.y - 15);
-      }
+    <!-- Victory Modal -->
+    <div id="victory-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="retro-box w-full max-w-md p-6 rounded-3xl text-center space-y-5 border-4 border-amber-400">
+            <div class="text-5xl animate-bounce">🏮 🐙 🥞 🥢 🍜 🍹</div>
+            <h2 class="jp-font text-2xl font-black text-amber-300">おめでとうございます!</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+                야시장(屋台)의 모든 음식을 획득했습니다! 일본어 가능/불가능 표현을 완전히 마스터하셨습니다!
+            </p>
+            <div class="bg-slate-900/90 p-4 rounded-2xl border border-amber-500/30 text-left space-y-2 text-xs text-slate-300">
+                <p class="font-bold text-amber-400">💡 학습 핵심 내용 (한자 없음):</p>
+                <ul class="list-disc list-inside space-y-1 jp-font">
+                    <li><strong class="text-emerald-400">가능할 때:</strong> はい、できます。</li>
+                    <li><strong class="text-rose-400">불가능할 때:</strong> あ、すみません。できません。</li>
+                    <li><strong class="text-amber-300">정중한 거절:</strong> あ、もうしわけございません。できません。</li>
+                </ul>
+            </div>
+            <button id="restart-game-btn" class="retro-btn-green w-full py-3 rounded-2xl font-bold text-white text-sm shadow-xl">
+                🔄 축제 다시 즐기기
+            </button>
+        </div>
+    </div>
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "11px sans-serif";
-      ctx.fillText(stall.name, stall.x, stall.y + 45);
+    <!-- Game Over Modal -->
+    <div id="gameover-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="retro-box w-full max-w-md p-6 rounded-3xl text-center space-y-5 border-4 border-rose-600">
+            <div class="text-5xl">💔</div>
+            <h2 class="text-2xl font-black text-rose-400">하트를 모두 소모했습니다!</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+                쿠션어(<span class="jp-font text-amber-300">あ、すみません / あ、もうしわけございません</span>)와 가능/불가능 표현을 기억하고 다시 도전해 보세요.
+            </p>
+            <button id="retry-game-btn" class="retro-btn w-full py-3 rounded-2xl font-bold text-white text-sm shadow-xl">
+                ❤️ 하트 채우고 다시 도전!
+            </button>
+        </div>
+    </div>
 
-      const dist = Math.hypot(player.x - stall.x, player.y - stall.y);
-      if (dist < 50 && !isDialogueOpen) {
-        ctx.fillStyle = "#ffcc00";
-        ctx.font = "bold 12px sans-serif";
-        ctx.fillText("[TALK]", stall.x, stall.y - 38);
-      }
-    });
+    <script>
+        // --- Web Audio SFX Utility ---
+        const soundEffect = {
+            ctx: null,
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            },
+            playBeep(freq = 440, type = 'sine', duration = 0.1) {
+                try {
+                    this.init();
+                    if (this.ctx.state === 'suspended') this.ctx.resume();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            },
+            correct() {
+                this.playBeep(523.25, 'triangle', 0.15); // C5
+                setTimeout(() => this.playBeep(659.25, 'triangle', 0.15), 100); // E5
+                setTimeout(() => this.playBeep(783.99, 'triangle', 0.25), 200); // G5
+            },
+            incorrect() {
+                this.playBeep(220, 'sawtooth', 0.2);
+                setTimeout(() => this.playBeep(185, 'sawtooth', 0.3), 150);
+            },
+            step() {
+                this.playBeep(120, 'sine', 0.03);
+            },
+            interact() {
+                this.playBeep(440, 'square', 0.08);
+            }
+        };
 
-    ctx.fillStyle = "#ff757d";
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.size / 2, 0, Math.PI * 2);
-    ctx.fill();
+        // --- Japanese Text To Speech Utility ---
+        let ttsEnabled = true;
 
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(player.x, player.y - 3, 4, 0, Math.PI * 2);
-    ctx.fill();
-  }
+        function speakJapanese(text, onEndCallback = null) {
+            if (!ttsEnabled || !('speechSynthesis' in window)) {
+                if (onEndCallback) onEndCallback();
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.85;
+            if (onEndCallback) {
+                utterance.onend = onEndCallback;
+            }
+            window.speechSynthesis.speak(utterance);
+        }
 
-  function gameLoop() {
-    update();
-    render();
-    if (gameStarted) requestAnimationFrame(gameLoop);
-  }
+        // Reads Dialogue A (Question) then Dialogue B (Answer) sequentially
+        function speakDialogueSequence(textA, textB) {
+            if (!ttsEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
 
-  setupMobileControls();
-  resizeCanvas();
-</script>
+            const utterA = new SpeechSynthesisUtterance(textA);
+            utterA.lang = 'ja-JP';
+            utterA.rate = 0.85;
+
+            const utterB = new SpeechSynthesisUtterance(textB);
+            utterB.lang = 'ja-JP';
+            utterB.rate = 0.85;
+
+            utterA.onend = () => {
+                setTimeout(() => {
+                    window.speechSynthesis.speak(utterB);
+                }, 300);
+            };
+
+            window.speechSynthesis.speak(utterA);
+        }
+
+        document.getElementById('tts-toggle-btn').addEventListener('click', () => {
+            ttsEnabled = !ttsEnabled;
+            document.getElementById('tts-status').textContent = ttsEnabled ? '음성 ON' : '음성 OFF';
+            document.getElementById('tts-icon').textContent = ttsEnabled ? '🔊' : '🔇';
+        });
+
+        // -------------------------------------------------------------
+        // STALLS DATA (NO KANJI IN JAPANESE TEXT AT ALL)
+        // -------------------------------------------------------------
+        const STATIONS = [
+            {
+                id: 'takoyaki',
+                foodName: 'たこやき',
+                foodEmoji: '🐙',
+                name: 'たこやき やたい',
+                japanese: 'おもちかえり (포장)',
+                x: 2, y: 3,
+                allow: true,
+                situation: '이 야타이는 테이크아웃(포장)이 가능합니다.',
+                question: 'おもちかえりが できますか。',
+                options: [
+                    { text: 'はい、できます。', correct: true, cushion: false, exp: '정답입니다! 테이크아웃이 가능하므로 "はい、できます。"라고 답하여 🐙 たこやき를 얻었습니다!' },
+                    { text: 'いいえ、できません。', correct: false, cushion: false, exp: '오답입니다. 이 야타이는 포장이 가능한 곳입니다.' },
+                    { text: 'あ、すみません。できません。', correct: false, cushion: true, exp: '오답입니다. 가능할 때는 거절 쿠션어를 쓰지 않습니다.' }
+                ]
+            },
+            {
+                id: 'okonomiyaki',
+                foodName: 'おこのみやき',
+                foodEmoji: '🥞',
+                name: 'おこのみやき やたい',
+                japanese: 'カード (카드)',
+                x: 5, y: 3,
+                allow: false,
+                situation: '이 야타이는 현금 결제만 가능하고, 카드 결제가 불가능합니다.',
+                question: 'カードが できますか。',
+                options: [
+                    { text: 'はい、できます。', correct: false, cushion: false, exp: '오답입니다. 카드 결제가 불가능한 야타이입니다.' },
+                    { text: 'あ、すみません。できません。', correct: true, cushion: true, exp: '정답입니다! 정중한 쿠션어 "あ、すみません"을 사용하여 결제 불가를 안내하고 🥞 おこのみやき를 얻었습니다!' },
+                    { text: 'いいえ、できません。', correct: false, cushion: false, exp: '아쉽습니다. 틀리진 않지만 실생활에서는 쿠션어(あ、すみません / あ、もうしわけございません)를 붙이는 것이 훨씬 자연스럽습니다.' }
+                ]
+            },
+            {
+                id: 'yakisoba',
+                foodName: 'やきそば',
+                foodEmoji: '🥢',
+                name: 'やきそば やたい',
+                japanese: 'おかわり (리필)',
+                x: 8, y: 3,
+                allow: true,
+                situation: '이 야타이는 리필(おかわり)이 가능합니다.',
+                question: 'おかわりが できますか。',
+                options: [
+                    { text: 'はい、できます。', correct: true, cushion: false, exp: '정답입니다! "はい、できます。"라고 밝게 답하고 🥢 やきそば를 얻었습니다!' },
+                    { text: 'あ、もうしわけございません。できません。', correct: false, cushion: true, exp: '오답입니다. 무료 리필이 가능한 곳입니다.' },
+                    { text: 'おかわりは できません。', correct: false, cushion: false, exp: '오답입니다. 리필이 가능합니다.' }
+                ]
+            },
+            {
+                id: 'ramen',
+                foodName: 'ラーメン',
+                foodEmoji: '🍜',
+                name: 'ラーメン やたい',
+                japanese: 'フリー Wi-Fi (무료 와이파이)',
+                x: 3, y: 7,
+                allow: false,
+                situation: '이 야타이는 와이파이 설비가 없습니다 (Wi-Fi 불가능).',
+                question: 'フリー Wi-Fiが できますか。',
+                options: [
+                    { text: 'はい、できます。', correct: false, cushion: false, exp: '오답입니다. 이 야타이는 와이파이가 되지 않습니다.' },
+                    { text: 'あ、もうしわけございません。できません。', correct: true, cushion: true, exp: '정답입니다! 최고로 정중한 쿠션어 "あ、もうしわけございません"을 써서 거절하고 🍜 ラーメン을 얻었습니다!' },
+                    { text: 'フリー Wi-Fiが できます。', correct: false, cushion: false, exp: '오답입니다. 와이파이가 불가능합니다.' }
+                ]
+            },
+            {
+                id: 'melonsoda',
+                foodName: 'メロンソーダ',
+                foodEmoji: '🍹',
+                name: 'メロンソーダ やたい',
+                japanese: 'おもちこみ (외부음식)',
+                x: 7, y: 7,
+                allow: false,
+                situation: '이 야타이는 외부 음식/음료 반입이 금지되어 있습니다.',
+                question: 'おもちこみが できますか。',
+                options: [
+                    { text: 'はい、できます。', correct: false, cushion: false, exp: '오답입니다. 외부 음식 반입이 금지되어 있습니다.' },
+                    { text: 'あ、すみません。おもちこみは できません。', correct: true, cushion: true, exp: '정답입니다! "あ、すみません。~は できません。" 구조로 완벽하게 대답하여 🍹 メロンソーダ를 얻었습니다!' },
+                    { text: 'おもちこみが できます。', correct: false, cushion: false, exp: '오답입니다. 반입이 안 됩니다.' }
+                ]
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // GAME STATE & ENGINE
+        // -------------------------------------------------------------
+        const GRID_COLS = 11;
+        const GRID_ROWS = 10;
+        
+        const state = {
+            player: { x: 5, y: 9, dir: 'up' },
+            hp: 3,
+            maxHp: 3,
+            inventory: new Set(),
+            activeStation: null,
+            isDialogueOpen: false,
+            isGameActive: false // Starts false until Start Game clicked
+        };
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = 660;
+            canvas.height = 600;
+        }
+        resizeCanvas();
+
+        // -------------------------------------------------------------
+        // RENDER FUNCTIONS (PIXEL ART STYLE)
+        // -------------------------------------------------------------
+        let lanternAnimFrame = 0;
+        setInterval(() => { lanternAnimFrame = (lanternAnimFrame + 1) % 60; }, 50);
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const tileSize = canvas.width / GRID_COLS;
+
+            // 1. Draw Night Festival Cobblestone Ground
+            for (let r = 0; r < GRID_ROWS; r++) {
+                for (let c = 0; c < GRID_COLS; c++) {
+                    const isEven = (r + c) % 2 === 0;
+                    ctx.fillStyle = isEven ? '#1e1b2e' : '#171424';
+                    ctx.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                    
+                    // Cobblestone outline details
+                    ctx.strokeStyle = '#110e1c';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(c * tileSize, r * tileSize, tileSize, tileSize);
+                }
+            }
+
+            // 2. Decorative Lantern Strings (Top and Center)
+            ctx.strokeStyle = '#852d3a';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, 30);
+            ctx.quadraticCurveTo(canvas.width / 2, 60, canvas.width, 30);
+            ctx.stroke();
+
+            // Lanterns Hanging
+            const lanternPositions = [0.8, 2.2, 3.8, 5.2, 6.8, 8.2, 9.8];
+            lanternPositions.forEach((pos, idx) => {
+                const lx = pos * tileSize;
+                const ly = 35 + Math.sin((lanternAnimFrame + idx * 10) * 0.1) * 3;
+                
+                // Glow
+                const grad = ctx.createRadialGradient(lx, ly + 15, 2, lx, ly + 15, 25);
+                grad.addColorStop(0, 'rgba(255, 180, 50, 0.4)');
+                grad.addColorStop(1, 'rgba(255, 180, 50, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(lx, ly + 15, 25, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Lantern Body
+                ctx.fillStyle = '#e63946';
+                ctx.fillRect(lx - 10, ly, 20, 24);
+                ctx.fillStyle = '#ffb703';
+                ctx.fillRect(lx - 8, ly + 4, 16, 16);
+                ctx.fillStyle = '#000000';
+                ctx.font = '10px sans-serif';
+                ctx.fillText('祭', lx - 5, ly + 16);
+            });
+
+            // 3. Draw Stalls (Yatai Vendors)
+            STATIONS.forEach(st => {
+                const sx = st.x * tileSize;
+                const sy = st.y * tileSize;
+
+                const isCompleted = state.inventory.has(st.id);
+
+                // Stall Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.fillRect(sx + 4, sy + tileSize - 8, tileSize - 8, 12);
+
+                // Stall Roof Tent
+                ctx.fillStyle = isCompleted ? '#2a9d8f' : '#e63946';
+                ctx.fillRect(sx + 2, sy + 4, tileSize - 4, 16);
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 5; i++) {
+                    ctx.fillRect(sx + 2 + (i * 12), sy + 16, 6, 6);
+                }
+
+                // Stall Wooden Table
+                ctx.fillStyle = '#8d5b4c';
+                ctx.fillRect(sx + 4, sy + 22, tileSize - 8, 26);
+                ctx.fillStyle = '#5c3a2f';
+                ctx.fillRect(sx + 6, sy + 24, tileSize - 12, 6);
+
+                // Food / Vendor Emoji
+                ctx.font = '22px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(st.foodEmoji, sx + tileSize / 2, sy + 32);
+
+                // Stall Label Banner
+                ctx.fillStyle = isCompleted ? '#10b981' : '#f59e0b';
+                ctx.fillRect(sx + 2, sy + 48, tileSize - 4, 14);
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 9px "Noto Sans JP", sans-serif';
+                ctx.fillText(st.foodName, sx + tileSize / 2, sy + 55);
+
+                // Checkmark badge if completed
+                if (isCompleted) {
+                    ctx.fillStyle = '#10b981';
+                    ctx.beginPath();
+                    ctx.arc(sx + tileSize - 8, sy + 8, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 10px sans-serif';
+                    ctx.fillText('✓', sx + tileSize - 8, sy + 8);
+                }
+            });
+
+            // 4. Draw Player Character
+            const px = state.player.x * tileSize;
+            const py = state.player.y * tileSize;
+
+            // Player Shadow
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.beginPath();
+            ctx.ellipse(px + tileSize / 2, py + tileSize - 6, 14, 6, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Player Body (Festive Yukata Character)
+            ctx.fillStyle = '#3b82f6'; // Blue Yukata
+            ctx.fillRect(px + 16, py + 22, 28, 28);
+            ctx.fillStyle = '#f59e0b'; // Obi sash
+            ctx.fillRect(px + 16, py + 34, 28, 6);
+
+            // Head & Face
+            ctx.fillStyle = '#fde047'; // Hair/Hat
+            ctx.beginPath();
+            ctx.arc(px + 30, py + 18, 14, Math.PI, 0);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffedd5'; // Skin
+            ctx.fillRect(px + 18, py + 18, 24, 12);
+
+            // Eyes based on direction
+            ctx.fillStyle = '#000000';
+            if (state.player.dir === 'down' || state.player.dir === 'up') {
+                ctx.fillRect(px + 23, py + 22, 3, 4);
+                ctx.fillRect(px + 34, py + 22, 3, 4);
+            } else if (state.player.dir === 'left') {
+                ctx.fillRect(px + 20, py + 22, 3, 4);
+                ctx.fillRect(px + 28, py + 22, 3, 4);
+            } else if (state.player.dir === 'right') {
+                ctx.fillRect(px + 29, py + 22, 3, 4);
+                ctx.fillRect(px + 37, py + 22, 3, 4);
+            }
+
+            // Prompt Speech Bubble if standing near a Stall
+            const nearbyStation = getNearbyStation();
+            if (nearbyStation && !state.isDialogueOpen && state.isGameActive) {
+                const bx = px + tileSize / 2;
+                const by = py - 12;
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.roundRect(bx - 36, by - 18, 72, 22, 8);
+                ctx.fill();
+
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('💬 대화하기', bx, by - 4);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // MOVEMENT & COLLISION LOGIC
+        // -------------------------------------------------------------
+        function getNearbyStation() {
+            return STATIONS.find(st => {
+                const dx = Math.abs(st.x - state.player.x);
+                const dy = Math.abs(st.y - state.player.y);
+                return (dx === 0 && dy === 1) || (dx === 1 && dy === 0) || (dx === 0 && dy === 0);
+            });
+        }
+
+        function movePlayer(dx, dy, dir) {
+            if (!state.isGameActive || state.isDialogueOpen) return;
+
+            state.player.dir = dir;
+            const newX = state.player.x + dx;
+            const newY = state.player.y + dy;
+
+            // Boundary checks
+            if (newX < 0 || newX >= GRID_COLS || newY < 1 || newY >= GRID_ROWS) return;
+
+            // Check stall collision (player cannot walk directly ON stall)
+            const isStall = STATIONS.some(st => st.x === newX && st.y === newY);
+            if (isStall) {
+                interact(); // Auto open interaction on walking into stall
+                return;
+            }
+
+            state.player.x = newX;
+            state.player.y = newY;
+            soundEffect.step();
+            drawGame();
+        }
+
+        function interact() {
+            if (!state.isGameActive || state.isDialogueOpen) return;
+
+            const st = getNearbyStation();
+            if (st) {
+                soundEffect.interact();
+                openDialogue(st);
+            }
+        }
+
+        // -------------------------------------------------------------
+        // DIALOGUE & QUIZ LOGIC
+        // -------------------------------------------------------------
+        function openDialogue(station) {
+            state.activeStation = station;
+            state.isDialogueOpen = true;
+
+            document.getElementById('npc-avatar').textContent = station.foodEmoji;
+            document.getElementById('npc-title').textContent = station.name;
+            document.getElementById('npc-topic').textContent = `학습: ${station.japanese}`;
+            document.getElementById('situation-text').textContent = station.situation;
+            document.getElementById('question-text').textContent = `「${station.question}」`;
+
+            // Reset Feedback & Show Options
+            document.getElementById('feedback-area').classList.add('hidden');
+            const optionsContainer = document.getElementById('quiz-options-container');
+            optionsContainer.classList.remove('hidden');
+            optionsContainer.innerHTML = '';
+
+            station.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'retro-btn w-full p-3 rounded-xl text-left font-bold text-amber-100 text-xs sm:text-sm flex items-center justify-between hover:border-amber-300 transition-all';
+                btn.innerHTML = `
+                    <span class="jp-font">${idx + 1}. ${opt.text}</span>
+                    <span class="text-amber-400">선택 ➔</span>
+                `;
+                btn.onclick = () => handleAnswer(opt);
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('dialogue-box').classList.remove('hidden');
+
+            // Auto-play TTS for Question
+            speakJapanese(station.question);
+        }
+
+        function handleAnswer(selectedOption) {
+            const optionsContainer = document.getElementById('quiz-options-container');
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackStatus = document.getElementById('feedback-status');
+            const feedbackExp = document.getElementById('feedback-explanation');
+            const dialogueALine = document.getElementById('dialogue-a-line');
+            const dialogueBLine = document.getElementById('dialogue-b-line');
+
+            optionsContainer.classList.add('hidden');
+            feedbackArea.classList.remove('hidden');
+
+            const qText = state.activeStation.question;
+            const aText = selectedOption.text;
+
+            dialogueALine.textContent = `A: 「${qText}」`;
+            dialogueBLine.textContent = `B: 「${aText}」`;
+
+            if (selectedOption.correct) {
+                soundEffect.correct();
+                state.inventory.add(state.activeStation.id);
+                updateInventoryUI();
+
+                feedbackStatus.className = 'flex items-center space-x-2 text-sm font-bold text-emerald-400';
+                feedbackStatus.innerHTML = `<span>⭕ 정답입니다! (${state.activeStation.foodEmoji} 획득)</span>`;
+                feedbackExp.textContent = selectedOption.exp;
+
+                // TTS Play BOTH Dialogue A and Dialogue B sequentially
+                speakDialogueSequence(qText, aText);
+
+                // Check Win Condition
+                if (state.inventory.size === STATIONS.length) {
+                    document.getElementById('next-action-btn').textContent = '🎉 축제 음식 모두 모음!';
+                    document.getElementById('next-action-btn').onclick = () => {
+                        closeDialogue();
+                        showVictoryModal();
+                    };
+                    return;
+                }
+            } else {
+                soundEffect.incorrect();
+                state.hp = Math.max(0, state.hp - 1);
+                updateHpUI();
+
+                feedbackStatus.className = 'flex items-center space-x-2 text-sm font-bold text-rose-400';
+                feedbackStatus.innerHTML = `<span>❌ 아쉽습니다! (하트 -1)</span>`;
+                feedbackExp.textContent = selectedOption.exp;
+
+                // TTS Cushion Word or Negative Answer
+                speakJapanese(aText);
+
+                if (state.hp <= 0) {
+                    document.getElementById('next-action-btn').textContent = '다음으로 →';
+                    document.getElementById('next-action-btn').onclick = () => {
+                        closeDialogue();
+                        showGameOverModal();
+                    };
+                    return;
+                }
+            }
+
+            document.getElementById('next-action-btn').textContent = '확인 완료';
+            document.getElementById('next-action-btn').onclick = () => {
+                closeDialogue();
+            };
+        }
+
+        function closeDialogue() {
+            state.isDialogueOpen = false;
+            document.getElementById('dialogue-box').classList.add('hidden');
+            drawGame();
+        }
+
+        // -------------------------------------------------------------
+        // UI & MODAL UPDATES
+        // -------------------------------------------------------------
+        function updateHpUI() {
+            document.getElementById('hp-count').textContent = `${state.hp}/${state.maxHp}`;
+        }
+
+        function updateInventoryUI() {
+            STATIONS.forEach(st => {
+                const el = document.getElementById(`item-${st.id}`);
+                if (el) {
+                    if (state.inventory.has(st.id)) {
+                        el.classList.remove('opacity-30');
+                        el.classList.add('opacity-100', 'scale-125');
+                    } else {
+                        el.classList.add('opacity-30');
+                        el.classList.remove('opacity-100', 'scale-125');
+                    }
+                }
+            });
+        }
+
+        function showVictoryModal() {
+            state.isGameActive = false;
+            document.getElementById('victory-modal').classList.remove('hidden');
+            soundEffect.correct();
+        }
+
+        function showGameOverModal() {
+            state.isGameActive = false;
+            document.getElementById('gameover-modal').classList.remove('hidden');
+            soundEffect.incorrect();
+        }
+
+        function resetGame() {
+            state.hp = 3;
+            state.inventory.clear();
+            state.player = { x: 5, y: 9, dir: 'up' };
+            state.isGameActive = true;
+            state.isDialogueOpen = false;
+
+            updateHpUI();
+            updateInventoryUI();
+
+            document.getElementById('victory-modal').classList.add('hidden');
+            document.getElementById('gameover-modal').classList.add('hidden');
+            document.getElementById('start-screen').classList.add('hidden');
+            closeDialogue();
+            drawGame();
+        }
+
+        // -------------------------------------------------------------
+        // EVENT LISTENERS (KEYBOARD & TOUCH)
+        // -------------------------------------------------------------
+        document.getElementById('start-game-btn').addEventListener('click', () => {
+            soundEffect.interact();
+            document.getElementById('start-screen').classList.add('hidden');
+            state.isGameActive = true;
+            drawGame();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') movePlayer(0, -1, 'up');
+            else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') movePlayer(0, 1, 'down');
+            else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') movePlayer(-1, 0, 'left');
+            else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') movePlayer(1, 0, 'right');
+            else if (e.key === ' ' || e.key === 'Enter') interact();
+        });
+
+        // Touch D-Pad Events
+        document.getElementById('btn-up').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(0, -1, 'up'); });
+        document.getElementById('btn-down').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(0, 1, 'down'); });
+        document.getElementById('btn-left').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(-1, 0, 'left'); });
+        document.getElementById('btn-right').addEventListener('touchstart', (e) => { e.preventDefault(); movePlayer(1, 0, 'right'); });
+        document.getElementById('mobile-interact-btn').addEventListener('touchstart', (e) => { e.preventDefault(); interact(); });
+
+        document.getElementById('btn-up').addEventListener('click', () => movePlayer(0, -1, 'up'));
+        document.getElementById('btn-down').addEventListener('click', () => movePlayer(0, 1, 'down'));
+        document.getElementById('btn-left').addEventListener('click', () => movePlayer(-1, 0, 'left'));
+        document.getElementById('btn-right').addEventListener('click', () => movePlayer(1, 0, 'right'));
+        document.getElementById('mobile-interact-btn').addEventListener('click', () => interact());
+
+        document.getElementById('close-dialogue-btn').addEventListener('click', closeDialogue);
+        document.getElementById('speak-prompt-btn').addEventListener('click', () => {
+            if (state.activeStation) speakJapanese(state.activeStation.question);
+        });
+
+        document.getElementById('restart-game-btn').addEventListener('click', resetGame);
+        document.getElementById('retry-game-btn').addEventListener('click', resetGame);
+
+        // Game Loop / Initial Draw
+        window.onload = function() {
+            drawGame();
+            setInterval(() => {
+                drawGame();
+            }, 100);
+        };
+    </script>
 </body>
 </html>
